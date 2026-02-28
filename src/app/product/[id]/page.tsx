@@ -90,7 +90,7 @@ function clampQty(value: string) {
 export default function ProductPage({ params }: { params: { id: string } }) {
   const addItem = useCartStore((s) => s.addItem);
 
-  const product = useMemo(
+  const found = useMemo(
     () => products.find((p) => p.id === params.id),
     [params.id]
   );
@@ -98,11 +98,14 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [qty, setQty] = useState<string>("1");
   const [toast, setToast] = useState<string>("");
 
-  if (!product) {
+  // ✅ Hard guard: after this line, `product` is non-optional
+  if (!found) {
     return (
       <div className="space-y-4">
         <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <h1 className="text-xl font-extrabold text-gray-900">Product not found</h1>
+          <h1 className="text-xl font-extrabold text-gray-900">
+            Product not found
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             This product ID doesn’t exist in the demo catalog yet.
           </p>
@@ -115,6 +118,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       </div>
     );
   }
+
+  const product = found; // ✅ now TS knows it’s defined everywhere below
 
   const qtyNum = Number(qty || "0");
   const lineTotal = qtyNum > 0 ? qtyNum * product.price : 0;
@@ -199,7 +204,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               <p className="text-sm leading-6 text-gray-600">{product.description}</p>
             </div>
 
-            <div className="mt-6 h-[2px] w-full bg-primary/15" />
+            <div className="mt-6 h-0.5 w-full bg-primary/15" />
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div className="space-y-1">
@@ -238,8 +243,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               {formatNGN(lineTotal)}
             </div>
             <div className="mt-1 text-sm text-gray-600">
-              Qty:{" "}
-              <span className="font-semibold text-gray-900">{qty || "-"}</span>
+              Qty: <span className="font-semibold text-gray-900">{qty || "-"}</span>
             </div>
 
             <div className="mt-4 flex flex-col gap-3">
