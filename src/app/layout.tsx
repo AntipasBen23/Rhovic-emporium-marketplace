@@ -4,7 +4,7 @@ import Header from "@/components/layout/Header";
 
 export const metadata: Metadata = {
   title: "RHOVIC Marketplace",
-  description: "A premium multi-vendor marketplace.",
+  description: "Multi-vendor commerce infrastructure platform.",
 };
 
 export default function RootLayout({
@@ -14,23 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <Header cartCount={0} />
+      <body className="min-h-screen bg-white text-gray-800">
+        <Header />
         <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-
-        <footer className="mt-10 border-t border-black/10">
-          <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-gray-600">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <span>
-                <span className="font-semibold text-primary">RHOVIC</span>{" "}
-                Marketplace — curated multi-vendor commerce.
-              </span>
-              <span className="text-gray-500">
-                © {new Date().getFullYear()} RHOVIC
-              </span>
-            </div>
-          </div>
-        </footer>
       </body>
     </html>
   );
