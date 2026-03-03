@@ -139,10 +139,10 @@ export default function VendorDashboardPage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
             Vendor Dashboard
           </h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Real-time multi-vendor infrastructure.
           </p>
         </div>
@@ -150,7 +150,7 @@ export default function VendorDashboardPage() {
         <div className="flex gap-2">
           <Link
             href="/vendor"
-            className="rounded-md border border-black/10 px-4 py-2 text-sm font-extrabold text-gray-900 transition hover:bg-black/5"
+            className="rounded-md border border-black/10 px-4 py-2 text-sm font-extrabold text-gray-900 transition hover:bg-black/5 dark:border-white/10 dark:text-gray-100 dark:hover:bg-white/5"
           >
             Vendor home
           </Link>
@@ -162,9 +162,9 @@ export default function VendorDashboardPage() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-black/10 bg-white p-5">
-          <div className="text-xs text-gray-600">Published products</div>
-          <div className="mt-2 text-2xl font-extrabold text-gray-900">
+        <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+          <div className="text-xs text-gray-600 dark:text-gray-400">Published products</div>
+          <div className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
             {stats.published}
           </div>
           <div className="mt-3 h-1 rounded-full bg-primary/20">
@@ -172,9 +172,9 @@ export default function VendorDashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-black/10 bg-white p-5">
-          <div className="text-xs text-gray-600">Draft products</div>
-          <div className="mt-2 text-2xl font-extrabold text-gray-900">
+        <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+          <div className="text-xs text-gray-600 dark:text-gray-400">Draft products</div>
+          <div className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
             {stats.draft}
           </div>
           <div className="mt-3 h-1 rounded-full bg-primary/20">
@@ -182,9 +182,9 @@ export default function VendorDashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-black/10 bg-white p-5">
-          <div className="text-xs text-gray-600">Sales Balance</div>
-          <div className="mt-2 text-2xl font-extrabold text-gray-900">
+        <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+          <div className="text-xs text-gray-600 dark:text-gray-400">Sales Balance</div>
+          <div className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
             {formatNGN(0)}
           </div>
           <div className="mt-3 h-1 rounded-full bg-primary/20">
@@ -206,7 +206,7 @@ export default function VendorDashboardPage() {
                 "rounded-full px-4 py-2 text-sm font-extrabold transition border",
                 active
                   ? "border-transparent bg-primary text-white"
-                  : "border-black/10 bg-white text-gray-900 hover:bg-black/5",
+                  : "border-black/10 bg-white text-gray-900 hover:bg-black/5 dark:border-white/10 dark:bg-white/5 dark:text-gray-100 dark:hover:bg-white/10",
               ].join(" ")}
             >
               {t}
@@ -217,9 +217,9 @@ export default function VendorDashboardPage() {
 
       {/* Content */}
       {tab === "Products" ? (
-        <section className="overflow-hidden rounded-2xl border border-black/10 bg-white">
-          <div className="flex items-center justify-between bg-black/5 px-5 py-4">
-            <div className="text-sm font-extrabold text-gray-900">Your products</div>
+        <section className="overflow-hidden rounded-2xl border border-black/10 bg-white dark:border-white/10 dark:bg-white/5">
+          <div className="flex items-center justify-between bg-black/5 px-5 py-4 dark:bg-white/5">
+            <div className="text-sm font-extrabold text-gray-900 dark:text-white">Your products</div>
             <button
               onClick={() => setShowAddModal(true)}
               className="rounded-md bg-accent px-4 py-2 text-sm font-extrabold text-black transition hover:brightness-105"
@@ -228,11 +228,11 @@ export default function VendorDashboardPage() {
             </button>
           </div>
 
-          <div className="divide-y divide-black/10">
+          <div className="divide-y divide-black/10 dark:divide-white/10">
             {loading ? (
-              <div className="p-10 text-center text-sm text-gray-600">Loading catalog...</div>
+              <div className="p-10 text-center text-sm text-gray-600 dark:text-gray-400">Loading catalog...</div>
             ) : products.length === 0 ? (
-              <div className="p-10 text-center text-sm text-gray-600">No products found. Start listing!</div>
+              <div className="p-10 text-center text-sm text-gray-600 dark:text-gray-400">No products found. Start listing!</div>
             ) : (
               products.map((p) => (
                 <div key={p.id} className="p-5">
@@ -243,12 +243,12 @@ export default function VendorDashboardPage() {
                       <div className="w-16 h-16 rounded-xl bg-black/5 flex items-center justify-center text-[10px] text-gray-400 font-extrabold uppercase">No Image</div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="truncate text-sm font-extrabold text-gray-900">
+                      <div className="truncate text-sm font-extrabold text-gray-900 dark:text-white">
                         {p.name}
                       </div>
-                      <div className="mt-1 text-xs text-gray-600">
+                      <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
                         {formatNGN(p.price)} • Stock:{" "}
-                        <span className="font-semibold text-gray-900">{p.stock_quantity}</span>
+                        <span className="font-semibold text-gray-900 dark:text-gray-100">{p.stock_quantity}</span>
                       </div>
                     </div>
 
@@ -261,7 +261,7 @@ export default function VendorDashboardPage() {
                       >
                         {p.status}
                       </span>
-                      <button className="rounded-md border border-black/10 px-3 py-2 text-xs font-extrabold text-gray-900 transition hover:bg-black/5">
+                      <button className="rounded-md border border-black/10 px-3 py-2 text-xs font-extrabold text-gray-900 transition hover:bg-black/5 dark:border-white/10 dark:text-white dark:hover:bg-white/5">
                         Edit
                       </button>
                     </div>
@@ -277,8 +277,8 @@ export default function VendorDashboardPage() {
 
       {/* Add Product Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-[#0c1612] dark:border dark:border-white/10">
             <div className="bg-primary p-6 text-white text-center">
               <h2 className="text-xl font-extrabold uppercase tracking-tight">Add New Product</h2>
               <p className="text-xs text-white/70 mt-1 uppercase font-bold tracking-widest">Photographed & Curated</p>
@@ -291,7 +291,7 @@ export default function VendorDashboardPage() {
                   required
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
-                  className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none"
+                  className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none dark:bg-black/20 dark:border-white/10 dark:text-white dark:placeholder-gray-500"
                   placeholder="e.g. Ankara Fabric"
                 />
               </div>
@@ -304,7 +304,7 @@ export default function VendorDashboardPage() {
                     type="number"
                     value={newPrice}
                     onChange={e => setNewPrice(e.target.value)}
-                    className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none"
+                    className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none dark:bg-black/20 dark:border-white/10 dark:text-white dark:placeholder-gray-500"
                     placeholder="8500"
                   />
                 </div>
@@ -314,7 +314,7 @@ export default function VendorDashboardPage() {
                     required
                     value={newStock}
                     onChange={e => setNewStock(e.target.value)}
-                    className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none"
+                    className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none dark:bg-black/20 dark:border-white/10 dark:text-white dark:placeholder-gray-500"
                     placeholder="100"
                   />
                 </div>
@@ -325,7 +325,7 @@ export default function VendorDashboardPage() {
                 <textarea
                   value={newDesc}
                   onChange={e => setNewDesc(e.target.value)}
-                  className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none min-h-[80px]"
+                  className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none min-h-[80px] dark:bg-black/20 dark:border-white/10 dark:text-white dark:placeholder-gray-500"
                   placeholder="Tell buyers about your item..."
                 />
               </div>
@@ -347,10 +347,10 @@ export default function VendorDashboardPage() {
                   <button
                     type="button"
                     onClick={handleUpload}
-                    className="w-full border-2 border-dashed border-black/10 rounded-2xl py-8 flex flex-col items-center justify-center hover:bg-black/5 transition group"
+                    className="w-full border-2 border-dashed border-black/10 rounded-2xl py-8 flex flex-col items-center justify-center hover:bg-black/5 transition group dark:border-white/10 dark:hover:bg-white/5"
                   >
                     <div className="text-2xl group-hover:scale-110 transition">📷</div>
-                    <div className="text-xs font-extrabold mt-1 text-gray-500">UPLOAD TO CLOUDINARY</div>
+                    <div className="text-xs font-extrabold mt-1 text-gray-500 dark:text-gray-400">UPLOAD TO CLOUDINARY</div>
                   </button>
                 )}
               </div>
@@ -359,7 +359,7 @@ export default function VendorDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 rounded-xl border border-black/10 py-3 text-sm font-extrabold uppercase hover:bg-black/5 transition"
+                  className="flex-1 rounded-xl border border-black/10 py-3 text-sm font-extrabold uppercase hover:bg-black/5 transition dark:border-white/10 dark:text-white dark:hover:bg-white/5"
                 >
                   Cancel
                 </button>

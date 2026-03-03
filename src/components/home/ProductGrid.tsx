@@ -72,32 +72,32 @@ export default function ProductGrid({
             <Link
               key={p.id}
               href={`/shop/product/${p.id}`}
-              className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md"
+              className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:shadow-primary/10"
             >
               <div className="p-4">
                 <div className="flex gap-3 mb-4">
                   {p.image_url ? (
-                    <img src={p.image_url} className="w-20 h-20 rounded-xl object-cover border border-black/5" />
+                    <img src={p.image_url} className="w-20 h-20 rounded-xl object-cover border border-black/5 dark:border-white/5" alt={p.name} />
                   ) : (
-                    <div className="w-20 h-20 rounded-xl bg-black/5 flex items-center justify-center text-[10px] text-gray-400 font-extrabold uppercase">No Image</div>
+                    <div className="w-20 h-20 rounded-xl bg-black/5 flex items-center justify-center text-[10px] text-gray-400 font-extrabold uppercase dark:bg-white/5">No Image</div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="truncate text-sm font-extrabold text-gray-900 group-hover:text-primary transition">
+                    <div className="truncate text-sm font-extrabold text-gray-900 group-hover:text-primary transition dark:text-gray-100">
                       {p.name}
                     </div>
-                    <div className="mt-1 text-xs text-gray-600">
+                    <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
                       RHOVIC Verified
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-black/5 p-3">
-                  <div className="text-xs text-gray-600">Price</div>
-                  <div className="mt-1 text-lg font-extrabold text-gray-900">
+                <div className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
+                  <div className="text-xs text-gray-600 dark:text-gray-400">Price</div>
+                  <div className="mt-1 text-lg font-extrabold text-gray-900 dark:text-white">
                     {formatNGN(p.price)}
                   </div>
                   {p.pricing_unit ? (
-                    <div className="text-xs text-gray-500">{p.pricing_unit}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">{p.pricing_unit}</div>
                   ) : null}
                 </div>
 

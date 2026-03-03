@@ -26,21 +26,21 @@ const trustItems: TrustItem[] = [
 
 export default function TrustBar() {
   return (
-    <section className="overflow-hidden rounded-2xl border border-black/10 bg-white">
+    <section className="overflow-hidden rounded-2xl border border-black/10 bg-white dark:border-white/10 dark:bg-white/5 transition-colors">
       <div className="flex flex-col gap-6 p-6 sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-lg font-extrabold tracking-tight text-gray-900">
+            <h2 className="text-lg font-extrabold tracking-tight text-gray-900 dark:text-white">
               Why buyers trust RHOVIC
             </h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Clean marketplace experience backed by strong transaction controls.
             </p>
           </div>
 
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center rounded-md border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-black/5"
+            className="inline-flex items-center justify-center rounded-md border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-black/5 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
           >
             Explore deals
           </Link>
@@ -50,14 +50,14 @@ export default function TrustBar() {
           {trustItems.map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl bg-black/5 p-4"
+              className="rounded-2xl bg-black/5 p-4 dark:bg-white/5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-extrabold text-gray-900">
+                  <div className="text-sm font-extrabold text-gray-900 dark:text-white">
                     {item.title}
                   </div>
-                  <div className="mt-1 text-sm leading-6 text-gray-600">
+                  <div className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
                     {item.desc}
                   </div>
                 </div>

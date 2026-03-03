@@ -2,35 +2,70 @@
 
 
 :root {
-  --color-primary: 18 77 52;      /* Deep Green */
-  --color-accent: 212 175 55;     /* Gold */
+  --color-primary: 18 77 52;
+  /* Deep Green */
+  --color-accent: 212 175 55;
+  /* Gold */
 
-  --color-bg: 255 255 255;        /* White */
-  --color-muted: 245 245 245;     /* Soft neutral */
-  --color-dark: 12 46 33;         /* Dark green variant */
+  --color-bg: 255 255 255;
+  /* White */
+  --color-muted: 245 245 245;
+  /* Soft neutral */
+  --color-dark: 12 46 33;
+  /* Dark green variant */
+  --color-text: 31 41 55;
+  /* gray-800 */
 }
 
-html, body {
+.dark {
+  --color-bg: 10 20 16;
+  /* Deep obsidian-green background */
+  --color-muted: 22 36 30;
+  /* Slightly lighter dark green */
+  --color-dark: 5 15 12;
+  /* even darker */
+  --color-text: 243 244 246;
+  /* gray-100 */
+  color-scheme: dark;
+}
+
+html,
+body {
   height: 100%;
 }
 
 body {
   margin: 0;
   background: rgb(var(--color-bg));
-  color: #1f2937; /* gray-800 */
+  color: rgb(var(--color-text));
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
     "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 /* RHOVIC utility classes (pure CSS) */
-.bg-primary { background-color: rgb(var(--color-primary)); }
-.bg-accent  { background-color: rgb(var(--color-accent)); }
+.bg-primary {
+  background-color: rgb(var(--color-primary));
+}
 
-.text-primary { color: rgb(var(--color-primary)); }
-.text-accent  { color: rgb(var(--color-accent)); }
+.bg-accent {
+  background-color: rgb(var(--color-accent));
+}
 
-.border-primary { border-color: rgb(var(--color-primary)); }
-.border-accent  { border-color: rgb(var(--color-accent)); }
+.text-primary {
+  color: rgb(var(--color-primary));
+}
+
+.text-accent {
+  color: rgb(var(--color-accent));
+}
+
+.border-primary {
+  border-color: rgb(var(--color-primary));
+}
+
+.border-accent {
+  border-color: rgb(var(--color-accent));
+}
 
 /* Buttons (pure CSS) */
 .btn-primary,
@@ -38,7 +73,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem; /* ~py-3 px-6 */
+  padding: 0.75rem 1.5rem;
+  /* ~py-3 px-6 */
   border-radius: 0.5rem;
   font-weight: 600;
   transition: filter 200ms ease, transform 200ms ease;
@@ -54,7 +90,8 @@ body {
 
 .btn-accent {
   background-color: rgb(var(--color-accent));
-  color: #111827; /* gray-900-ish */
+  color: #111827;
+  /* gray-900-ish */
 }
 
 .btn-primary:hover,

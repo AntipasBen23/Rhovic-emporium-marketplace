@@ -25,7 +25,7 @@ export default function CategoryPills({
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-4">
-        <h2 className="text-lg font-extrabold tracking-tight text-gray-900">
+        <h2 className="text-lg font-extrabold tracking-tight text-gray-900 dark:text-white">
           Browse categories
         </h2>
         <Link
@@ -49,7 +49,7 @@ export default function CategoryPills({
                 "border",
                 isActive
                   ? "border-transparent bg-primary text-white"
-                  : "border-black/10 bg-white text-gray-800 hover:bg-black/5",
+                  : "border-black/10 bg-white text-gray-800 hover:bg-black/5 dark:border-white/10 dark:bg-white/5 dark:text-gray-100 dark:hover:bg-white/10",
               ].join(" ")}
               aria-pressed={isActive}
             >
@@ -60,17 +60,17 @@ export default function CategoryPills({
       </div>
 
       {/* Small helper row */}
-      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
-        <span className="inline-flex items-center gap-2 rounded-full bg-black/5 px-3 py-1">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+        <span className="inline-flex items-center gap-2 rounded-full bg-black/5 px-3 py-1 dark:bg-white/5">
           <span className="h-2 w-2 rounded-full bg-accent" />
           Curated vendors
         </span>
-        <span className="inline-flex items-center gap-2 rounded-full bg-black/5 px-3 py-1">
+        <span className="inline-flex items-center gap-2 rounded-full bg-black/5 px-3 py-1 dark:bg-white/5">
           <span className="h-2 w-2 rounded-full bg-primary" />
           Real-time stock
         </span>
-        <span className="inline-flex items-center gap-2 rounded-full bg-black/5 px-3 py-1">
-          <span className="h-2 w-2 rounded-full bg-black" />
+        <span className="inline-flex items-center gap-2 rounded-full bg-black/5 px-3 py-1 dark:bg-white/5">
+          <span className="h-2 w-2 rounded-full bg-black dark:bg-gray-100" />
           One checkout
         </span>
       </div>
