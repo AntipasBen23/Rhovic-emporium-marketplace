@@ -79,8 +79,8 @@ export default function VendorDashboardPage() {
     // @ts-ignore
     const widget = window.cloudinary.createUploadWidget(
       {
-        cloudName: "rhovic-marketplace", // Replace with real cloud name
-        uploadPreset: "ml_default", // Replace with real preset
+        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "rhovic-marketplace",
+        uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default",
         sources: ["local", "url", "camera"],
         multiple: false,
         cropping: true,
@@ -255,8 +255,8 @@ export default function VendorDashboardPage() {
                     <div className="flex items-center gap-2">
                       <span
                         className={`rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-tighter ${p.status === "published"
-                            ? "bg-primary text-white"
-                            : "bg-black text-white"
+                          ? "bg-primary text-white"
+                          : "bg-black text-white"
                           }`}
                       >
                         {p.status}
