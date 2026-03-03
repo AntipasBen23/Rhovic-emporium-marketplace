@@ -58,7 +58,7 @@ export default function VendorDashboardPage() {
     try {
       setLoading(true);
       const prodData = await api.get<Product[]>("/vendor/products");
-      setProducts(prodData || []);
+      setProducts(Array.isArray(prodData) ? prodData : []);
 
       // Orders placeholder for now as backend might need more wiring
       setOrders([]);

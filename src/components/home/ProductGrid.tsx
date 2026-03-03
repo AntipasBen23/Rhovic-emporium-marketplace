@@ -39,7 +39,7 @@ export default function ProductGrid({
     try {
       setLoading(true);
       const data = await api.get<Product[]>("/products");
-      setProducts(data || []);
+      setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to fetch products:", err);
     } finally {
