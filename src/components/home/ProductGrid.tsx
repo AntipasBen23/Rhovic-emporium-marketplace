@@ -1,73 +1,21 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
 type Product = {
   id: string;
   name: string;
   price: number;
-  unit?: string;
-  vendor: string;
-  category: string;
-  badge?: "Top Rated" | "New" | "Best Deal";
+  pricing_unit?: string;
+  image_url?: string;
+  status: string;
 };
 
 type ProductGridProps = {
   title?: string;
-  products?: Product[];
 };
-
-const defaultProducts: Product[] = [
-  {
-    id: "p1",
-    name: "Premium Cotton Fabric (Ankara)",
-    price: 8500,
-    unit: "per yard",
-    vendor: "Rhovic Textiles",
-    category: "Fabrics",
-    badge: "Top Rated",
-  },
-  {
-    id: "p2",
-    name: "Wireless Earbuds Pro",
-    price: 32000,
-    unit: "per item",
-    vendor: "GadgetHub",
-    category: "Electronics",
-    badge: "Best Deal",
-  },
-  {
-    id: "p3",
-    name: "Luxury Body Oil – 250ml",
-    price: 12000,
-    unit: "per bottle",
-    vendor: "Glow & Co",
-    category: "Beauty",
-    badge: "New",
-  },
-  {
-    id: "p4",
-    name: "Minimalist Sneakers (Unisex)",
-    price: 28000,
-    unit: "per pair",
-    vendor: "Urban Kicks",
-    category: "Fashion",
-  },
-  {
-    id: "p5",
-    name: "Modern Table Lamp",
-    price: 18000,
-    unit: "per item",
-    vendor: "HomeLine",
-    category: "Home",
-  },
-  {
-    id: "p6",
-    name: "Industrial Safety Gloves",
-    price: 9500,
-    unit: "per pair",
-    vendor: "WorkSupply",
-    category: "Industrial",
-  },
-];
 
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -77,27 +25,28 @@ function formatNGN(amount: number) {
   }).format(amount);
 }
 
-function Badge({ text }: { text: NonNullable<Product["badge"]> }) {
-  const cls =
-    text === "Top Rated"
-      ? "bg-primary text-white"
-      : text === "Best Deal"
-      ? "bg-accent text-black"
-      : "bg-black text-white";
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${cls}`}
-    >
-      {text}
-    </span>
-  );
-}
-
 export default function ProductGrid({
   title = "Popular right now",
-  products = defaultProducts,
 }: ProductGridProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  async function fetchProducts() {
+    try {
+      setLoading(true);
+      const data = await api.get<Product[]>("/products");
+      setProducts(data || []);
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-4">
@@ -110,49 +59,62 @@ export default function ProductGrid({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((p) => (
-          <Link
-            key={p.id}
-            href={`/product/${p.id}`}
-            className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md"
-          >
-            <div className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-gray-900">
-                    {p.name}
-                  </div>
-                  <div className="mt-1 text-xs text-gray-600">
-                    by <span className="font-semibold">{p.vendor}</span> •{" "}
-                    {p.category}
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-48 animate-pulse rounded-2xl bg-black/5" />
+          ))
+        ) : products.length === 0 ? (
+          <div className="col-span-full py-10 text-center text-sm text-gray-500">
+            No products available yet.
+          </div>
+        ) : (
+          products.map((p) => (
+            <Link
+              key={p.id}
+              href={`/shop/product/${p.id}`}
+              className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md"
+            >
+              <div className="p-4">
+                <div className="flex gap-3 mb-4">
+                  {p.image_url ? (
+                    <img src={p.image_url} className="w-20 h-20 rounded-xl object-cover border border-black/5" />
+                  ) : (
+                    <div className="w-20 h-20 rounded-xl bg-black/5 flex items-center justify-center text-[10px] text-gray-400 font-extrabold uppercase">No Image</div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="truncate text-sm font-extrabold text-gray-900 group-hover:text-primary transition">
+                      {p.name}
+                    </div>
+                    <div className="mt-1 text-xs text-gray-600">
+                      RHOVIC Verified
+                    </div>
                   </div>
                 </div>
-                {p.badge ? <Badge text={p.badge} /> : null}
-              </div>
 
-              <div className="mt-4 rounded-xl bg-black/5 p-3">
-                <div className="text-xs text-gray-600">Price</div>
-                <div className="mt-1 text-lg font-extrabold text-gray-900">
-                  {formatNGN(p.price)}
+                <div className="rounded-xl bg-black/5 p-3">
+                  <div className="text-xs text-gray-600">Price</div>
+                  <div className="mt-1 text-lg font-extrabold text-gray-900">
+                    {formatNGN(p.price)}
+                  </div>
+                  {p.pricing_unit ? (
+                    <div className="text-xs text-gray-500">{p.pricing_unit}</div>
+                  ) : null}
                 </div>
-                {p.unit ? (
-                  <div className="text-xs text-gray-500">{p.unit}</div>
-                ) : null}
+
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-sm font-extrabold text-primary">
+                    View details
+                  </span>
+                  <span className="rounded-full bg-accent px-3 py-1 text-xs font-extrabold text-black transition group-hover:brightness-105">
+                    Add to cart
+                  </span>
+                </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-primary">
-                  View details
-                </span>
-                <span className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-black transition group-hover:brightness-105">
-                  Add to cart
-                </span>
-              </div>
-            </div>
-
-            <div className="h-[3px] bg-primary" />
-          </Link>
-        ))}
+              <div className="h-[3px] bg-primary" />
+            </Link>
+          ))
+        )}
       </div>
     </section>
   );

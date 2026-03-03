@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "Multi-vendor commerce infrastructure platform.",
 };
 
+import Script from "next/script";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -17,6 +19,10 @@ export default function RootLayout({
       <body className="min-h-screen bg-white text-gray-800">
         <Header />
         <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+        <Script
+          src="https://upload-widget.cloudinary.com/global/all.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
