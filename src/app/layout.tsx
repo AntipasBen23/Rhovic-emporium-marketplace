@@ -17,9 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased selection:bg-accent/30">
+      <body className="antialiased selection:bg-yellow-200/50">
         <ThemeProvider>
-          <div className="min-h-screen bg-[rgb(var(--color-bg))] text-[rgb(var(--color-text))] transition-colors duration-500 ease-in-out">
+          <div className="min-h-screen bg-white text-gray-950 dark:bg-[rgb(8,15,12)] dark:text-gray-50 transition-colors duration-300">
             <Header />
             <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">{children}</main>
           </div>

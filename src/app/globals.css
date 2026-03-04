@@ -1,36 +1,49 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap');
 
-:root {
-  --color-primary: 18 77 52;
+/* ============================================================
+   TAILWIND v4 THEME — registers brand utilities like bg-primary
+   ============================================================ */
+@theme {
+  --color-primary: rgb(18, 77, 52);
   /* Deep Brand Green */
-  --color-accent: 255 183 3;
-  /* Rich Brand Gold */
+  --color-accent: rgb(255, 183, 3);
+  /* Rich Brand Gold  */
+  --color-dark: rgb(12, 46, 33);
+  /* Dark green shade */
+  --color-muted: rgb(240, 244, 242);
+  /* Soft green-gray  */
+}
 
-  --color-bg: 252 253 252;
-  /* Very subtle green-tinted off-white for better card separation */
-  --color-muted: 240 244 242;
-  /* Soft neutral green-gray */
-  --color-dark: 12 46 33;
-  /* Dark green variant */
-  --color-text: 3 7 18;
-  /* gray-950 for absolute maximum readability */
-  --color-text-muted: 55 65 81;
-  /* gray-700 for better contrast on muted text */
+/* ============================================================
+   CSS VARIABLES (for glass-panel, body color, etc.)
+   ============================================================ */
+:root {
+  --bg: 255 255 255;
+  /* pure white — panels visible */
+  --text: 3 7 18;
+  /* near-black = gray-950       */
+  --text-muted: 45 55 72;
+  /* gray-700 — readable muted   */
+  --border: 226 232 240;
+  /* slate-200 — visible borders */
 }
 
 .dark {
-  --color-bg: 8 15 12;
-  /* Deeper obsidian-green */
-  --color-muted: 18 30 25;
-  --color-dark: 4 10 8;
-  --color-text: 249 250 251;
-  /* gray-50 */
-  --color-text-muted: 156 163 175;
-  /* gray-400 */
+  --bg: 8 15 12;
+  /* deep obsidian-green         */
+  --text: 249 250 251;
+  /* gray-50                     */
+  --text-muted: 156 163 175;
+  /* gray-400                    */
+  --border: 30 50 40;
+  /* dark green border           */
   color-scheme: dark;
 }
 
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 html,
 body {
   height: 100%;
@@ -39,8 +52,8 @@ body {
 
 body {
   margin: 0;
-  background: rgb(var(--color-bg));
-  color: rgb(var(--color-text));
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -54,57 +67,89 @@ h4,
   font-family: 'Outfit', sans-serif;
 }
 
-/* Premium Shadows & Effects */
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+
+/* Glass panel — clear border in light mode */
 .glass-panel {
-  background: rgba(var(--color-bg) / 0.7);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(var(--color-text) / 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+.dark .glass-panel {
+  background: rgba(8, 15, 12, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Premium shadow */
 .shadow-premium {
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1), 0 4px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 8px 24px -6px rgba(0, 0, 0, 0.10),
+    0 20px 40px -12px rgba(0, 0, 0, 0.06);
 }
 
+/* Hover lift */
 .hover-lift {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
 }
 
-/* Animations */
+/* ============================================================
+   ANIMATIONS
+   — NO opacity:0 start so text is always visible on SSR/hydration
+   ============================================================ */
 @keyframes fadeInUp {
   from {
+    transform: translateY(22px);
     opacity: 0;
-    transform: translateY(20px);
   }
 
   to {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
 .animate-fade-up {
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* fallback: always visible */
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInUp 0.7s ease-out both;
 }
 
+/* Delays */
 .delay-100 {
-  animation-delay: 100ms;
+  animation-delay: 80ms;
 }
 
 .delay-200 {
-  animation-delay: 200ms;
+  animation-delay: 160ms;
 }
 
 .delay-300 {
-  animation-delay: 300ms;
+  animation-delay: 240ms;
 }
 
-/* Buttons Overhaul */
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
 .btn-primary,
 .btn-accent {
   display: inline-flex;
@@ -112,33 +157,39 @@ h4,
   justify-content: center;
   padding: 0.875rem 2rem;
   border-radius: 0.75rem;
-  font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.25s ease;
   text-decoration: none;
   border: none;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.01em;
 }
 
+/* Primary CTA — deep green */
 .btn-primary {
-  background-color: rgb(var(--color-primary));
+  background-color: rgb(18, 77, 52);
   color: #fff;
-  box-shadow: 0 4px 14px 0 rgba(18, 77, 52, 0.39);
+  box-shadow: 0 4px 14px rgba(18, 77, 52, 0.3);
 }
 
-.btn-accent {
-  background-color: rgb(var(--color-accent));
-  color: #111827;
-  box-shadow: 0 4px 14px 0 rgba(212, 175, 55, 0.3);
-}
-
-.btn-primary:hover,
-.btn-accent:hover {
+.btn-primary:hover {
+  background-color: rgb(14, 63, 43);
   transform: translateY(-2px);
-  filter: brightness(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 22px rgba(18, 77, 52, 0.35);
+}
+
+/* Accent CTA — gold (limited: primary CTA only) */
+.btn-accent {
+  background-color: rgb(255, 183, 3);
+  color: #111;
+  box-shadow: 0 4px 14px rgba(255, 183, 3, 0.3);
+}
+
+.btn-accent:hover {
+  background-color: rgb(230, 165, 0);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(255, 183, 3, 0.35);
 }
 
 .btn-primary:active,
