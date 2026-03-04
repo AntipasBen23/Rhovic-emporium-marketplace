@@ -27,7 +27,7 @@ export default function Header() {
           <span className="text-2xl font-black tracking-tighter text-primary font-heading">
             RHOVIC
           </span>
-          <span className="hidden text-sm font-bold text-gray-400 dark:text-gray-500 sm:inline group-hover:text-primary transition-colors">
+          <span className="hidden text-sm font-black text-gray-900 dark:text-gray-400 sm:inline group-hover:text-primary transition-colors uppercase tracking-widest">
             Marketplace
           </span>
         </Link>
@@ -56,14 +56,14 @@ export default function Header() {
 
             <Link
               href="/pricing"
-              className="hidden rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-black/5 dark:text-gray-200 dark:hover:bg-white/5 sm:inline-flex"
+              className="hidden rounded-xl px-4 py-2.5 text-sm font-black text-gray-950 transition hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/5 sm:inline-flex uppercase tracking-tight"
             >
               Pricing
             </Link>
 
             <Link
               href="/vendor"
-              className="hidden rounded-xl bg-black/5 px-4 py-2.5 text-sm font-bold text-gray-900 transition hover:bg-black/10 dark:bg-white/5 dark:text-gray-100 dark:hover:bg-white/10 sm:inline-flex"
+              className="hidden rounded-xl bg-primary/5 px-4 py-2.5 text-sm font-black text-primary transition hover:bg-primary/10 dark:bg-primary/10 dark:text-accent dark:hover:bg-primary/20 sm:inline-flex uppercase tracking-tight"
             >
               Sell
             </Link>

@@ -45,11 +45,11 @@ export default function CategoryPills({
               type="button"
               onClick={() => setActive(c)}
               className={[
-                "rounded-xl px-5 py-2.5 text-sm font-bold transition-all duration-300",
+                "rounded-xl px-5 py-2.5 text-sm font-black transition-all duration-300",
                 "border hover-lift shadow-sm",
                 isActive
-                  ? "border-transparent bg-primary text-white shadow-primary/20"
-                  : "border-black/5 bg-white text-gray-700 hover:bg-black/5 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10",
+                  ? "border-transparent bg-primary text-white shadow-md shadow-primary/30"
+                  : "border-black/10 bg-white text-gray-950 hover:bg-primary/5 hover:border-primary/20 hover:text-primary dark:border-white/10 dark:bg-white/5 dark:text-gray-100 dark:hover:bg-white/10",
               ].join(" ")}
               style={{ animationDelay: `${i * 50}ms` }}
               aria-pressed={isActive}
@@ -61,7 +61,7 @@ export default function CategoryPills({
       </div>
 
       {/* Small helper row */}
-      <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-widest">
+      <div className="flex flex-wrap items-center gap-4 text-xs font-black text-gray-600 dark:text-gray-400 uppercase tracking-widest">
         <span className="inline-flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           Curated vendors
@@ -71,7 +71,7 @@ export default function CategoryPills({
           Real-time stock
         </span>
         <span className="inline-flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-gray-100" />
+          <span className="h-1.5 w-1.5 rounded-full bg-gray-950 dark:bg-gray-100" />
           One checkout
         </span>
       </div>

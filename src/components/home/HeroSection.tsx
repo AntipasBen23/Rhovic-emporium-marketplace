@@ -2,11 +2,11 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden rounded-[2.5rem] border border-black/5 bg-white dark:border-white/5 dark:bg-white/5 transition-all duration-500 shadow-premium">
+    <section className="relative overflow-hidden rounded-[2.5rem] border border-black/5 bg-muted/30 dark:border-white/5 dark:bg-white/5 transition-all duration-500 shadow-premium">
       <div className="grid gap-12 p-8 sm:p-12 md:grid-cols-2 md:items-center">
         <div className="space-y-8 animate-fade-up">
           <div className="space-y-4">
-            <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider animate-fade-up delay-100">
+            <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-black text-primary uppercase tracking-[0.2em] animate-fade-up delay-100 dark:bg-primary/20">
               <span className="h-2 w-2 rounded-full bg-accent animate-pulse" />
               Verified Commerce Infrastructure
             </p>
@@ -16,9 +16,9 @@ export default function HeroSection() {
               <span className="text-primary italic">Trusted</span> Marketplaces.
             </h1>
 
-            <p className="max-w-xl text-pretty text-lg leading-relaxed text-gray-700 sm:text-xl animate-fade-up delay-300 dark:text-gray-300">
+            <p className="max-w-xl text-pretty text-lg leading-relaxed text-gray-800 sm:text-xl font-medium animate-fade-up delay-300 dark:text-gray-300">
               Unified checkout across curated vendors. Professional inventory management.
-              Real-time payouts. All in one place.
+              Real-time payouts. <span className="text-primary font-bold underline decoration-accent/30 underline-offset-4">All in one place.</span>
             </p>
           </div>
 
@@ -30,7 +30,7 @@ export default function HeroSection() {
 
             <Link
               href="/vendor"
-              className="group inline-flex items-center justify-center rounded-xl border-2 border-black/10 px-8 py-3.5 text-center font-bold text-gray-900 transition-all hover:bg-black/5 hover:border-black/20 sm:w-auto dark:border-white/10 dark:text-gray-100 dark:hover:bg-white/5 dark:hover:border-white/20"
+              className="group inline-flex items-center justify-center rounded-xl border-2 border-primary/20 px-8 py-3.5 text-center font-black text-primary transition-all hover:bg-primary/5 hover:border-primary/40 sm:w-auto dark:border-white/10 dark:text-gray-100 dark:hover:bg-white/5 dark:hover:border-white/20"
             >
               Become a Vendor
             </Link>
@@ -42,9 +42,9 @@ export default function HeroSection() {
               { label: "Verified", val: "Curated" },
               { label: "Live", val: "Stock" }
             ].map((item, i) => (
-              <div key={i} className="rounded-2xl bg-black/5 p-4 transition-transform hover:scale-105 dark:bg-white/5">
-                <div className="text-[10px] font-black uppercase tracking-widest text-primary/60">{item.label}</div>
-                <div className="mt-1 font-bold text-gray-950 dark:text-white">{item.val}</div>
+              <div key={i} className="rounded-2xl bg-white p-4 shadow-sm border border-black/5 transition-transform hover:scale-105 dark:bg-white/5 dark:border-white/5">
+                <div className="text-[10px] font-black uppercase tracking-widest text-primary">{item.label}</div>
+                <div className="mt-1 font-black text-gray-950 dark:text-white">{item.val}</div>
               </div>
             ))}
           </div>
@@ -52,30 +52,30 @@ export default function HeroSection() {
 
         {/* Right visual block */}
         <div className="relative aspect-square md:aspect-auto md:h-[500px] overflow-hidden rounded-[2rem] border border-black/5 bg-primary shadow-2xl animate-fade-up delay-200">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-dark opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-dark opacity-100" />
 
           <div className="relative h-full flex flex-col justify-end p-8 sm:p-10">
             <div className="space-y-4 max-w-sm">
-              <div className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-bold text-white uppercase tracking-wider backdrop-blur-md">
+              <div className="inline-flex rounded-full bg-accent px-3 py-1 text-[10px] font-black text-black uppercase tracking-[0.2em] shadow-lg shadow-accent/20">
                 Spotlight
               </div>
 
-              <div className="text-3xl font-black tracking-tight text-white font-heading">
+              <div className="text-3xl font-black tracking-tight text-white font-heading underline decoration-accent decoration-4 underline-offset-8">
                 Rhovic Textiles
               </div>
 
-              <p className="text-base leading-relaxed text-white/80">
+              <p className="text-base leading-relaxed text-white/90 font-medium">
                 Premium fabrics and bespoke materials — curated, professionally photographed, and stocked for instant fulfillment.
               </p>
 
-              <div className="rounded-2xl bg-white/10 p-5 text-white backdrop-blur-xl border border-white/10">
+              <div className="rounded-2xl bg-white/10 p-5 text-white backdrop-blur-xl border border-white/20 shadow-xl">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black uppercase tracking-widest text-white/60">Featured collection</span>
-                  <span className="rounded-full bg-accent px-3 py-1 text-[10px] font-black text-black uppercase tracking-tight">
-                    Premium Picks
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Verified Source</span>
+                  <span className="rounded-full bg-accent/20 border border-accent/40 px-3 py-1 text-[10px] font-black text-accent uppercase tracking-tight">
+                    AUTHENTIC
                   </span>
                 </div>
-                <div className="text-sm font-bold">
+                <div className="text-sm font-black tracking-tight">
                   Bestselling fabrics, accessories, and electronics — direct from verified source.
                 </div>
               </div>

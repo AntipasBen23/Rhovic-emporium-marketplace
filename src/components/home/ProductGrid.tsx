@@ -55,7 +55,7 @@ export default function ProductGrid({
           <h2 className="text-3xl font-black tracking-tight text-gray-950 font-heading dark:text-white sm:text-4xl">
             Curated Products
           </h2>
-          <p className="max-w-md text-base font-medium text-gray-600 dark:text-gray-400">
+          <p className="max-w-md text-base font-semibold text-gray-700 dark:text-gray-400">
             Selected items from our most trusted and verified vendors, vetted for quality and performance.
           </p>
         </div>
@@ -122,7 +122,7 @@ export default function ProductGrid({
               </div>
 
               <div className="flex flex-1 flex-col py-6 px-1">
-                <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-primary/60">
+                <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-primary">
                   {p.category || "RHOVIC SELECTION"}
                 </div>
                 <h3 className="text-lg font-black text-gray-950 dark:text-white font-heading group-hover:text-primary transition-colors line-clamp-1 leading-tight">
@@ -132,7 +132,7 @@ export default function ProductGrid({
                   <div className="text-xl font-black text-gray-950 dark:text-white">
                     ₦{p.price?.toLocaleString()}
                   </div>
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  <div className="text-[10px] font-black text-primary uppercase tracking-widest">
                     Verified
                   </div>
                 </div>

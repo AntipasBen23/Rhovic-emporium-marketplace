@@ -67,7 +67,7 @@ function Tag({ t }: { t: NonNullable<Deal["tag"]> }) {
 
 export default function DealsStrip() {
   return (
-    <section className="overflow-hidden rounded-[2.5rem] border border-black/5 bg-white shadow-premium animate-fade-up dark:border-white/5 dark:bg-white/5">
+    <section className="overflow-hidden rounded-[2.5rem] border border-black/8 bg-white shadow-premium animate-fade-up dark:border-white/5 dark:bg-white/5">
       <div className="flex flex-col gap-6 bg-primary p-8 text-white sm:flex-row sm:items-center sm:justify-between sm:p-10">
         <div className="space-y-1">
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Limited Opportunities</div>

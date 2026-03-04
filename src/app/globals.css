@@ -3,31 +3,29 @@
 
 :root {
   --color-primary: 18 77 52;
-  /* Deep Green */
-  --color-accent: 212 175 55;
-  /* Gold */
+  /* Deep Brand Green */
+  --color-accent: 255 183 3;
+  /* Rich Brand Gold */
 
-  --color-bg: 255 255 255;
-  /* White */
-  --color-muted: 242 245 243;
+  --color-bg: 252 253 252;
+  /* Very subtle green-tinted off-white for better card separation */
+  --color-muted: 240 244 242;
   /* Soft neutral green-gray */
   --color-dark: 12 46 33;
   /* Dark green variant */
-  --color-text: 17 24 39;
-  /* gray-900 for maximum readability */
-  --color-text-muted: 75 85 99;
-  /* gray-600 for contrast */
+  --color-text: 3 7 18;
+  /* gray-950 for absolute maximum readability */
+  --color-text-muted: 55 65 81;
+  /* gray-700 for better contrast on muted text */
 }
 
 .dark {
-  --color-bg: 10 20 16;
-  /* Deep obsidian-green background */
-  --color-muted: 22 36 30;
-  /* Slightly lighter dark green */
-  --color-dark: 5 15 12;
-  /* even darker */
-  --color-text: 243 244 246;
-  /* gray-100 */
+  --color-bg: 8 15 12;
+  /* Deeper obsidian-green */
+  --color-muted: 18 30 25;
+  --color-dark: 4 10 8;
+  --color-text: 249 250 251;
+  /* gray-50 */
   --color-text-muted: 156 163 175;
   /* gray-400 */
   color-scheme: dark;
@@ -58,10 +56,10 @@ h4,
 
 /* Premium Shadows & Effects */
 .glass-panel {
-  background: rgba(var(--color-bg) / 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(var(--color-text) / 0.08);
+  background: rgba(var(--color-bg) / 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(var(--color-text) / 0.12);
 }
 
 .shadow-premium {

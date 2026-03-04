@@ -26,21 +26,21 @@ const trustItems: TrustItem[] = [
 
 export default function TrustBar() {
   return (
-    <section className="overflow-hidden rounded-[2.5rem] border border-black/5 bg-white dark:border-white/5 dark:bg-white/5 transition-all duration-500 shadow-premium animate-fade-up">
+    <section className="overflow-hidden rounded-[2.5rem] border border-black/5 bg-muted/30 dark:border-white/5 dark:bg-white/5 transition-all duration-500 shadow-premium animate-fade-up">
       <div className="flex flex-col gap-8 p-8 sm:p-12">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">
             <h2 className="text-2xl font-black tracking-tight text-gray-950 font-heading dark:text-white">
               Why buyers trust RHOVIC
             </h2>
-            <p className="max-w-md text-base font-medium text-gray-600 dark:text-gray-400">
+            <p className="max-w-md text-base font-semibold text-gray-700 dark:text-gray-400">
               Clean marketplace experience backed by strong transaction controls and verified partners.
             </p>
           </div>
 
           <Link
             href="/shop"
-            className="group inline-flex items-center justify-center rounded-xl border border-black/10 bg-white px-6 py-3 text-sm font-bold text-gray-900 transition-all hover:bg-black/5 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+            className="group inline-flex items-center justify-center rounded-xl border-2 border-primary/20 bg-primary/5 px-6 py-3 text-sm font-black text-primary transition-all hover:bg-primary/10 hover:border-primary/40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
           >
             Explore deals
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 transition-transform group-hover:translate-x-1"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
@@ -51,7 +51,7 @@ export default function TrustBar() {
           {trustItems.map((item, i) => (
             <div
               key={item.title}
-              className="group rounded-2xl glass-panel p-6 shadow-sm transition-all duration-300 hover-lift border border-black/[0.03] dark:border-white/[0.03]"
+              className="group rounded-2xl bg-white dark:bg-white/5 p-6 shadow-sm transition-all duration-300 hover-lift border border-black/8 dark:border-white/5"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="flex flex-col items-start gap-4">
@@ -63,7 +63,7 @@ export default function TrustBar() {
                   <div className="text-base font-black text-gray-950 dark:text-white font-heading tracking-tight">
                     {item.title}
                   </div>
-                  <div className="mt-2 text-sm leading-relaxed font-medium text-gray-600 dark:text-gray-400">
+                  <div className="mt-2 text-sm leading-relaxed font-semibold text-gray-700 dark:text-gray-400">
                     {item.desc}
                   </div>
                 </div>
