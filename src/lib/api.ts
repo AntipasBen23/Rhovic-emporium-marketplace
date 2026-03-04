@@ -17,8 +17,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   });
 
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    throw new Error(errorBody.message || `Request failed with status ${response.status}`);
+    const errorBody = await response.json().catch(() => ({} as Record<string, unknown>));
+    const message =
+      (typeof errorBody.message === "string" && errorBody.message) ||
+      (typeof errorBody.error === "string" && errorBody.error) ||
+      `Request failed with status ${response.status}`;
+    const details =
+      typeof errorBody.details === "string" && errorBody.details
+        ? `: ${errorBody.details}`
+        : "";
+    throw new Error(`${message}${details}`);
   }
 
   if (response.status === 204) return {} as T;
