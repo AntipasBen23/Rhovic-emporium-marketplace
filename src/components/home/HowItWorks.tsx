@@ -42,99 +42,106 @@ const vendorSteps: Step[] = [
   },
 ];
 
-function StepCard({ s }: { s: Step }) {
+function StepCard({ s, i }: { s: Step, i: number }) {
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-4">
-      <div className="flex items-start gap-3">
-        <div className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-extrabold text-black">
+    <div
+      className="group rounded-2xl glass-panel p-6 shadow-sm transition-all duration-300 hover-lift border border-black/[0.03] dark:border-white/[0.03]"
+      style={{ animationDelay: `${i * 100}ms` }}
+    >
+      <div className="flex items-start gap-4">
+        <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">
           {s.tag}
         </div>
         <div className="min-w-0">
-          <div className="text-sm font-extrabold text-gray-900">{s.title}</div>
-          <div className="mt-1 text-sm leading-6 text-gray-600">{s.desc}</div>
+          <div className="text-base font-black text-gray-950 font-heading dark:text-white leading-tight">
+            {s.title}
+          </div>
+          <div className="mt-2 text-sm leading-relaxed font-medium text-gray-600 dark:text-gray-400">
+            {s.desc}
+          </div>
         </div>
       </div>
-      <div className="mt-4 h-[2px] w-full bg-primary/20" />
+      <div className="mt-6 h-1 w-0 bg-accent transition-all duration-500 group-hover:w-full rounded-full opacity-30" />
     </div>
   );
 }
 
 export default function HowItWorks() {
   return (
-    <section className="space-y-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-gray-900">
+    <section className="space-y-10 animate-fade-up">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2">
+          <h2 className="text-3xl font-black tracking-tight text-gray-950 font-heading dark:text-white sm:text-4xl">
             How it works
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Built like a marketplace engine — not a patched storefront.
+          <p className="max-w-md text-base font-medium text-gray-600 dark:text-gray-400">
+            A professional commerce engine designed for scalability, transparency, and trust.
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center rounded-md border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-black/5"
+            className="group inline-flex items-center justify-center rounded-xl border-2 border-black/10 bg-white px-6 py-3 text-sm font-black text-gray-900 transition-all hover:bg-black/5 dark:border-white/10 dark:bg-black/20 dark:text-white dark:hover:bg-black/40"
           >
             Shop now
           </Link>
           <Link
             href="/vendor"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:brightness-105"
+            className="btn-accent"
           >
             Start selling
           </Link>
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         {/* Buyer flow */}
-        <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
-          <div className="p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs font-semibold text-gray-600">For buyers</div>
-                <div className="mt-1 text-base font-extrabold text-gray-900">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-black/5 bg-black/[0.02] dark:border-white/5 dark:bg-white/[0.02] group">
+          <div className="p-8 sm:p-10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-1">
+                <div className="text-[10px] font-black uppercase tracking-widest text-primary">For buyers</div>
+                <div className="text-xl font-black text-gray-950 font-heading dark:text-white">
                   Find. Add. Pay. Track.
                 </div>
               </div>
-              <span className="rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-white">
-                Premium checkout
+              <span className="rounded-full bg-primary px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-primary/20">
+                Premium flow
               </span>
             </div>
 
-            <div className="mt-4 grid gap-3">
-              {buyerSteps.map((s) => (
-                <StepCard key={s.title} s={s} />
+            <div className="grid gap-4">
+              {buyerSteps.map((s, i) => (
+                <StepCard key={s.title} s={s} i={i} />
               ))}
             </div>
           </div>
-          <div className="h-[3px] bg-primary" />
+          <div className="absolute bottom-0 left-0 h-1.5 w-full bg-primary/20" />
         </div>
 
         {/* Vendor flow */}
-        <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/5">
-          <div className="p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs font-semibold text-gray-600">For vendors</div>
-                <div className="mt-1 text-base font-extrabold text-gray-900">
-                  Register. List. Sell. Earn.
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-black/5 bg-black/[0.02] dark:border-white/5 dark:bg-white/[0.02] group">
+          <div className="p-8 sm:p-10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-1">
+                <div className="text-[10px] font-black uppercase tracking-widest text-accent">For vendors</div>
+                <div className="text-xl font-black text-gray-950 font-heading dark:text-white">
+                  List. Manage. Earn.
                 </div>
               </div>
-              <span className="rounded-full bg-accent px-3 py-1 text-xs font-extrabold text-black">
-                Transparent payouts
+              <span className="rounded-full bg-accent px-4 py-2 text-[10px] font-black uppercase tracking-widest text-black shadow-lg shadow-accent/20">
+                Live dashboard
               </span>
             </div>
 
-            <div className="mt-4 grid gap-3">
-              {vendorSteps.map((s) => (
-                <StepCard key={s.title} s={s} />
+            <div className="grid gap-4">
+              {vendorSteps.map((s, i) => (
+                <StepCard key={s.title} s={s} i={i + 3} />
               ))}
             </div>
           </div>
-          <div className="h-[3px] bg-primary" />
+          <div className="absolute bottom-0 left-0 h-1.5 w-full bg-accent/20" />
         </div>
       </div>
     </section>

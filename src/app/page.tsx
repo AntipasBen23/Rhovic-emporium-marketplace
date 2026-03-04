@@ -10,7 +10,7 @@ import FooterLinks from "@/components/home/FooterLinks";
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-24 pb-20">
       <HeroSection />
       <CategoryPills />
       <DealsStrip />

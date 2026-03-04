@@ -20,60 +20,66 @@ export default function Header() {
   }, [itemCount]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/10 bg-[rgb(var(--color-bg))/90] backdrop-blur transition-colors dark:border-white/10 dark:bg-[rgb(var(--color-bg))/80]">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+    <header className="sticky top-0 z-50 glass-panel shadow-premium animate-fade-up border-b border-black/5 dark:border-white/5 transition-all duration-300">
+      <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-4">
         {/* Brand */}
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="text-lg font-extrabold tracking-tight text-primary">
+        <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-[1.02]">
+          <span className="text-2xl font-black tracking-tighter text-primary font-heading">
             RHOVIC
           </span>
-          <span className="hidden text-sm font-medium text-gray-600 dark:text-gray-400 sm:inline">
+          <span className="hidden text-sm font-bold text-gray-400 dark:text-gray-500 sm:inline group-hover:text-primary transition-colors">
             Marketplace
           </span>
         </Link>
 
         {/* Search */}
         <div className="flex flex-1 items-center">
-          <div className="relative w-full">
+          <div className="relative w-full max-w-md mx-auto">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products, vendors, categories…"
-              className="w-full rounded-xl border border-black/10 bg-white/50 px-4 py-2.5 text-sm outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:border-white/10 dark:bg-black/20 dark:text-white dark:placeholder-gray-500"
+              placeholder="Search anything..."
+              className="w-full rounded-2xl border border-black/10 bg-black/5 px-5 py-3 text-sm font-medium outline-none transition-all placeholder:text-gray-500 focus:bg-white focus:ring-4 focus:ring-primary/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:bg-black/40"
               aria-label="Search marketplace"
             />
-            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-              ⌘K
+            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 opacity-40">
+              <span className="text-[10px] font-bold border rounded px-1.5 py-0.5">⌘</span>
+              <span className="text-[10px] font-bold border rounded px-1.5 py-0.5">K</span>
             </div>
           </div>
         </div>
 
         {/* Actions */}
-        <nav className="flex items-center gap-2">
-          <ThemeToggle />
+        <nav className="flex items-center gap-4">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <ThemeToggle />
 
-          <Link
-            href="/pricing"
-            className="hidden rounded-lg border border-black/10 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:bg-black/5 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/5 sm:inline-flex"
-          >
-            Pricing
-          </Link>
+            <Link
+              href="/pricing"
+              className="hidden rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-black/5 dark:text-gray-200 dark:hover:bg-white/5 sm:inline-flex"
+            >
+              Pricing
+            </Link>
 
-          <Link
-            href="/vendor"
-            className="hidden rounded-lg border border-black/10 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:bg-black/5 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/5 sm:inline-flex"
-          >
-            Sell on RHOVIC
-          </Link>
+            <Link
+              href="/vendor"
+              className="hidden rounded-xl bg-black/5 px-4 py-2.5 text-sm font-bold text-gray-900 transition hover:bg-black/10 dark:bg-white/5 dark:text-gray-100 dark:hover:bg-white/10 sm:inline-flex"
+            >
+              Sell
+            </Link>
+          </div>
 
           <Link
             href="/cart"
-            className="relative inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2 text-sm font-extrabold text-black transition hover:brightness-105"
+            className="relative inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-sm font-black text-black transition-all hover:scale-[1.05] hover:shadow-lg hover:shadow-accent/20 active:scale-95"
             aria-label={cartLabel}
           >
-            {cartLabel}
+            <span className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
+              <span className="hidden sm:inline">{cartLabel}</span>
+            </span>
             {itemCount > 0 ? (
-              <span className="absolute -right-2 -top-2 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-extrabold text-white">
+              <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-black text-white ring-2 ring-white dark:ring-black">
                 {Math.round(itemCount) === itemCount ? itemCount : "•"}
               </span>
             ) : null}
@@ -81,7 +87,7 @@ export default function Header() {
         </nav>
       </div>
 
-      <div className="h-[2px] w-full bg-primary" />
+      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
     </header>
   );
 }
