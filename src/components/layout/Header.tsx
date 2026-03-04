@@ -55,13 +55,6 @@ export default function Header() {
             <ThemeToggle />
 
             <Link
-              href="/pricing"
-              className="hidden rounded-xl px-4 py-2.5 text-sm font-black text-gray-950 transition hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/5 sm:inline-flex uppercase tracking-tight"
-            >
-              Pricing
-            </Link>
-
-            <Link
               href="/vendor"
               className="hidden rounded-xl bg-primary/5 px-4 py-2.5 text-sm font-black text-primary transition hover:bg-primary/10 dark:bg-primary/10 dark:text-accent dark:hover:bg-primary/20 sm:inline-flex uppercase tracking-tight"
             >

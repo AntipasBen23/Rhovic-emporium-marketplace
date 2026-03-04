@@ -24,13 +24,6 @@ export default function VendorEntryPage() {
               <Link href="/vendor/register" className="btn-primary w-full sm:w-auto">
                 Register as a Vendor
               </Link>
-
-              <Link
-                href="/pricing"
-                className="w-full rounded-md border border-black/10 px-6 py-3 text-center font-extrabold text-gray-900 transition hover:bg-black/5 sm:w-auto"
-              >
-                View pricing plans
-              </Link>
             </div>
 
             <div className="grid gap-3 pt-2 sm:grid-cols-3">
@@ -80,13 +73,6 @@ export default function VendorEntryPage() {
                   For growing sellers who want visibility boosts and better support.
                 </div>
               </div>
-
-              <Link
-                href="/pricing"
-                className="inline-flex w-full items-center justify-center rounded-md bg-accent px-5 py-3 text-sm font-extrabold text-black transition hover:brightness-105"
-              >
-                Compare plans
-              </Link>
             </div>
 
             <div className="pointer-events-none absolute inset-0 opacity-30">

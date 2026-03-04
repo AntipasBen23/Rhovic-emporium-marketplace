@@ -19,9 +19,7 @@ const columns: Column[] = [
     title: "Sell on RHOVIC",
     links: [
       { label: "Vendor registration", href: "/vendor" },
-      { label: "Pricing plans", href: "/pricing" },
       { label: "Vendor dashboard", href: "/vendor/dashboard" },
-      { label: "Commission structure", href: "/pricing#commission" },
     ],
   },
   {

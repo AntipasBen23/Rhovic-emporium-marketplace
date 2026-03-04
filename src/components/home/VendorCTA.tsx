@@ -27,12 +27,6 @@ export default function VendorCTA() {
               Become a Vendor
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 transition-transform group-hover:translate-x-1"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
             </Link>
-            <Link
-              href="/pricing"
-              className="inline-flex items-center justify-center rounded-xl border-2 border-black/10 px-8 py-3 text-center font-bold text-gray-950 transition-all hover:bg-black/5 dark:border-white/10 dark:text-gray-100 dark:hover:bg-white/5"
-            >
-              View pricing
-            </Link>
           </div>
 
           <div className="grid gap-4 pt-4 sm:grid-cols-3">
