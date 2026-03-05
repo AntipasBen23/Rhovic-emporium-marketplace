@@ -40,7 +40,9 @@ export default function VendorDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const token = useAuthStore((state) => state.token);
+  const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
+  const [submitError, setSubmitError] = useState("");
 
   // Form State
   const [newName, setNewName] = useState("");
@@ -65,7 +67,13 @@ export default function VendorDashboardPage() {
       // Orders placeholder for now as backend might need more wiring
       setOrders([]);
     } catch (err: any) {
-      if (String(err?.message || "").toLowerCase().includes("forbidden")) {
+      const msg = String(err?.message || "").toLowerCase();
+      if (msg.includes("status 401")) {
+        logout();
+        router.replace("/login?next=/vendor/dashboard");
+        return;
+      }
+      if (msg.includes("forbidden")) {
         router.replace("/vendor");
         return;
       }
@@ -94,6 +102,7 @@ export default function VendorDashboardPage() {
       (error: any, result: any) => {
         if (!error && result && result.event === "success") {
           setNewImageUrl(result.info.secure_url);
+          widget.close();
         }
       }
     );
@@ -102,6 +111,7 @@ export default function VendorDashboardPage() {
 
   async function handleAddProduct(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitError("");
     setIsSubmitting(true);
     try {
       await api.post("/vendor/products", {
@@ -116,8 +126,14 @@ export default function VendorDashboardPage() {
       setShowAddModal(false);
       resetForm();
       fetchData();
-    } catch (err) {
-      alert("Failed to add product");
+    } catch (err: any) {
+      const msg = String(err?.message || "");
+      if (msg.toLowerCase().includes("status 401")) {
+        logout();
+        router.replace("/login?next=/vendor/dashboard");
+        return;
+      }
+      setSubmitError(msg || "Failed to add product");
     } finally {
       setIsSubmitting(false);
     }
@@ -284,13 +300,18 @@ export default function VendorDashboardPage() {
       {/* Add Product Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-[#0c1612] dark:border dark:border-white/10">
+          <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-[#0c1612] dark:border dark:border-white/10 max-h-[88vh] flex flex-col">
             <div className="bg-primary p-6 text-white text-center">
               <h2 className="text-xl font-extrabold uppercase tracking-tight">Add New Product</h2>
               <p className="text-xs text-white/70 mt-1 uppercase font-bold tracking-widest">Photographed & Curated</p>
             </div>
 
-            <form onSubmit={handleAddProduct} className="p-6 space-y-4">
+            <form onSubmit={handleAddProduct} className="p-6 space-y-4 overflow-y-auto">
+              {submitError && (
+                <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">
+                  {submitError}
+                </div>
+              )}
               <div className="space-y-1">
                 <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500">Product Name</label>
                 <input
