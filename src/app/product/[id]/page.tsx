@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
 import { useCartStore } from "@/store/cart";
 import { api } from "@/lib/api";
 import { normalizeProduct, type CatalogProduct, type Category, normalizeCategories } from "@/lib/catalog";
@@ -24,7 +25,9 @@ function clampQty(value: string) {
   return String(fixed);
 }
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+export default function ProductPage() {
+  const params = useParams<{ id: string }>();
+  const productID = Array.isArray(params?.id) ? params?.id[0] : params?.id;
   const addItem = useCartStore((s) => s.addItem);
   const [product, setProduct] = useState<CatalogProduct | null>(null);
   const [related, setRelated] = useState<CatalogProduct[]>([]);
@@ -35,10 +38,15 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     async function load() {
+      if (!productID) {
+        setLoading(false);
+        setProduct(null);
+        return;
+      }
       try {
         setLoading(true);
         const [productRaw, categoriesData, relatedRaw] = await Promise.all([
-          api.get<unknown>(`/products/${params.id}`),
+          api.get<unknown>(`/products/${productID}`),
           api.get<{ items: unknown[] }>("/categories"),
           api.get<unknown[]>("/products?limit=8"),
         ]);
@@ -57,7 +65,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       }
     }
     load();
-  }, [params.id]);
+  }, [productID]);
 
   const qtyNum = useMemo(() => Number(qty || "0"), [qty]);
   const lineTotal = qtyNum > 0 ? qtyNum * (product?.price || 0) : 0;
