@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 
@@ -39,6 +40,7 @@ export default function VendorDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const token = useAuthStore((state) => state.token);
+  const router = useRouter();
 
   // Form State
   const [newName, setNewName] = useState("");
@@ -62,7 +64,11 @@ export default function VendorDashboardPage() {
 
       // Orders placeholder for now as backend might need more wiring
       setOrders([]);
-    } catch (err) {
+    } catch (err: any) {
+      if (String(err?.message || "").toLowerCase().includes("forbidden")) {
+        router.replace("/vendor");
+        return;
+      }
       console.error("Fetch error:", err);
     } finally {
       setLoading(false);

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 
@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
     const setAuth = useAuthStore((state) => state.setAuth);
 
     async function onSubmit(e: React.FormEvent) {
@@ -29,8 +30,11 @@ export default function LoginPage() {
             const payload = JSON.parse(atob(res.access_token.split(".")[1]));
             setAuth(res.access_token, payload.role);
 
-            if (payload.role === "vendor") {
-                router.push("/vendor/dashboard");
+            const next = searchParams.get("next");
+            if (next) {
+                router.push(next);
+            } else if (payload.role === "vendor") {
+                router.push("/vendor");
             } else {
                 router.push("/");
             }
@@ -100,8 +104,8 @@ export default function LoginPage() {
 
                 <div className="text-center text-xs text-gray-600">
                     Don't have an account?{" "}
-                    <Link href="/vendor/register" className="font-extrabold text-primary hover:underline">
-                        Register as a vendor
+                    <Link href="/signup" className="font-extrabold text-primary hover:underline">
+                        Sign up
                     </Link>
                 </div>
             </form>

@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { useAuthStore } from "@/store/auth";
 
 const GREEN = "rgb(18,77,52)";
-const GOLD = "rgb(255,183,3)";
 
 const COUNTRIES = [
   "Nigeria", "Ghana", "Kenya", "South Africa", "United Kingdom",
@@ -18,6 +18,12 @@ const inputClass =
 
 const labelClass = "mb-1.5 block text-sm font-semibold text-gray-950 dark:text-gray-100";
 const requiredStar = <span style={{ color: "red" }} aria-hidden="true"> *</span>;
+
+type VendorApplication = {
+  has_application: boolean;
+  status?: "pending" | "approved" | "rejected" | "suspended";
+  business_name?: string;
+};
 
 function Field({
   label,
@@ -41,9 +47,11 @@ function Field({
 
 export default function VendorRegisterPage() {
   const router = useRouter();
+  const token = useAuthStore((s) => s.token);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [application, setApplication] = useState<VendorApplication | null>(null);
+  const [loadingState, setLoadingState] = useState(true);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [shopName, setShopName] = useState("");
@@ -66,6 +74,29 @@ export default function VendorRegisterPage() {
   const [toast, setToast] = useState("");
   const [toastOk, setToastOk] = useState(false);
 
+  useEffect(() => {
+    if (!token) {
+      router.replace("/signup?next=/vendor/register");
+      return;
+    }
+
+    async function loadApplication() {
+      try {
+        setLoadingState(true);
+        const data = await api.get<VendorApplication>("/vendor/application");
+        if (data?.has_application && data.status === "approved") {
+          router.replace("/vendor/dashboard");
+          return;
+        }
+        setApplication(data);
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    loadApplication();
+  }, [token, router]);
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setToast("");
@@ -85,8 +116,6 @@ export default function VendorRegisterPage() {
       { val: city, name: "City" },
       { val: zipCode, name: "Post/ZIP Code" },
       { val: country, name: "Country" },
-      { val: email, name: "Email" },
-      { val: password, name: "Password" },
     ];
 
     const missing = required.find((f) => !f.val.trim());
@@ -98,10 +127,7 @@ export default function VendorRegisterPage() {
 
     setLoading(true);
     try {
-      await api.post("/auth/register", {
-        email,
-        password,
-        role: "vendor",
+      await api.post("/vendor/apply", {
         first_name: firstName,
         last_name: lastName,
         shop_name: shopName,
@@ -120,34 +146,48 @@ export default function VendorRegisterPage() {
         account_iban: accountIBAN,
       });
       setToastOk(true);
-      setToast("Registration successful! Your application is under review. Redirecting to login...");
-      setTimeout(() => router.push("/login"), 2500);
+      setToast("Application submitted successfully. Awaiting admin approval...");
+      setTimeout(() => router.push("/vendor"), 1800);
     } catch (err: any) {
       setToastOk(false);
-      setToast(err.message || "Registration failed. Please try again.");
+      setToast(err.message || "Application failed. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
+  if (loadingState) {
+    return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600">Checking vendor status...</div>;
+  }
+
+  if (application?.has_application && application.status === "pending") {
+    return (
+      <section className="rounded-2xl border border-yellow-200 bg-yellow-50 p-6">
+        <h1 className="text-2xl font-extrabold text-gray-900">Application Submitted</h1>
+        <p className="mt-2 text-sm text-gray-700">Your application is awaiting admin approval.</p>
+        <div className="mt-4">
+          <span className="inline-flex rounded-full bg-yellow-200 px-3 py-1 text-xs font-bold text-yellow-800">Status: pending</span>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-3xl space-y-6 py-6">
-      {/* Header */}
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-black tracking-tight text-gray-950 dark:text-white sm:text-4xl">
-            Vendor Registration
+            Vendor Application
           </h1>
           <p className="mt-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-            Submit your details. Your store goes live after approval.
+            Submit your details. Your store goes live after admin approval.
           </p>
         </div>
-        <Link href="/login" className="text-sm font-bold hover:underline underline-offset-4" style={{ color: GREEN }}>
-          ← Back to login
+        <Link href="/vendor" className="text-sm font-bold hover:underline underline-offset-4" style={{ color: GREEN }}>
+          ← Back
         </Link>
       </div>
 
-      {/* Toast */}
       {toast && (
         <div
           className="rounded-xl border p-4 text-sm font-medium"
@@ -163,23 +203,6 @@ export default function VendorRegisterPage() {
 
       <form onSubmit={onSubmit} className="space-y-0">
         <div className="rounded-2xl border border-gray-100 dark:border-white/10 bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm">
-
-          {/* ── Section: Account ── */}
-          <div className="border-b border-gray-100 dark:border-white/10 p-6 space-y-4">
-            <h2 className="font-heading text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
-              Account Credentials
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Email Address" required>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="vendor@example.com" className={inputClass} />
-              </Field>
-              <Field label="Password" required>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="At least 8 characters" className={inputClass} />
-              </Field>
-            </div>
-          </div>
-
-          {/* ── Section: Personal Info ── */}
           <div className="border-b border-gray-100 dark:border-white/10 p-6 space-y-4">
             <h2 className="font-heading text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
               Personal Information
@@ -192,7 +215,6 @@ export default function VendorRegisterPage() {
             </Field>
           </div>
 
-          {/* ── Section: Shop Info ── */}
           <div className="border-b border-gray-100 dark:border-white/10 p-6 space-y-4">
             <h2 className="font-heading text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
               Shop Details
@@ -217,7 +239,6 @@ export default function VendorRegisterPage() {
             </Field>
           </div>
 
-          {/* ── Section: Address ── */}
           <div className="border-b border-gray-100 dark:border-white/10 p-6 space-y-4">
             <h2 className="font-heading text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
               Business Address
@@ -254,7 +275,6 @@ export default function VendorRegisterPage() {
             </Field>
           </div>
 
-          {/* ── Section: Company / Tax ── */}
           <div className="border-b border-gray-100 dark:border-white/10 p-6 space-y-4">
             <h2 className="font-heading text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
               Company &amp; Tax (optional)
@@ -270,7 +290,6 @@ export default function VendorRegisterPage() {
             </Field>
           </div>
 
-          {/* ── Section: Banking ── */}
           <div className="p-6 space-y-4">
             <h2 className="font-heading text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
               Payout Information
@@ -284,7 +303,6 @@ export default function VendorRegisterPage() {
           </div>
         </div>
 
-        {/* Terms + Submit */}
         <div className="pt-6 space-y-4">
           <label className="flex cursor-pointer items-start gap-3">
             <input
@@ -297,8 +315,7 @@ export default function VendorRegisterPage() {
               I have read and agree to the{" "}
               <Link href="/terms" className="underline underline-offset-4 font-bold" style={{ color: GREEN }}>
                 Terms &amp; Conditions
-              </Link>
-              .
+              </Link>.
             </span>
           </label>
 
@@ -308,15 +325,8 @@ export default function VendorRegisterPage() {
             className="w-full rounded-xl py-4 text-sm font-black uppercase tracking-widest text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 active:scale-[0.98]"
             style={{ background: loading ? "rgba(18,77,52,0.6)" : GREEN, boxShadow: "0 4px 14px rgba(18,77,52,0.3)" }}
           >
-            {loading ? "Submitting..." : "Become a Vendor"}
+            {loading ? "Submitting..." : "Submit Vendor Application"}
           </button>
-
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            Already have an account?{" "}
-            <Link href="/login" className="font-bold underline underline-offset-4" style={{ color: GREEN }}>
-              Log in
-            </Link>
-          </p>
         </div>
       </form>
     </div>
