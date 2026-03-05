@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 
@@ -24,15 +24,21 @@ function RuleItem({ ok, text }: { ok: boolean; text: string }) {
   );
 }
 
-export default function SignupPage() {
+export default function ResetPasswordPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("token") || "";
+    setToken(t);
+  }, []);
 
   const rules = checkPasswordRules(password);
   const passwordValid = Object.values(rules).every(Boolean);
@@ -40,7 +46,12 @@ export default function SignupPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
+    if (!token) {
+      setError("Missing reset token. Start again from Forgot password.");
+      return;
+    }
     if (!passwordValid) {
       setError("Password does not meet the required rules.");
       return;
@@ -52,11 +63,14 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await api.post("/auth/register", { email, password, role: "buyer" });
-      const next = new URLSearchParams(window.location.search).get("next") || "/";
-      router.push(`/login?next=${encodeURIComponent(next)}`);
+      await api.post("/auth/reset-password", {
+        token,
+        new_password: password,
+      });
+      setSuccess("Password reset successful. Redirecting to login...");
+      setTimeout(() => router.push("/login"), 1000);
     } catch (err: unknown) {
-      setError((err as { message?: string })?.message || "Sign up failed.");
+      setError((err as { message?: string })?.message || "Reset failed.");
     } finally {
       setLoading(false);
     }
@@ -65,30 +79,20 @@ export default function SignupPage() {
   return (
     <div className="mx-auto max-w-md space-y-6 pt-10">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Create account</h1>
-        <p className="text-sm text-gray-600">Sign up, then continue your vendor application.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Reset Password</h1>
+        <p className="text-sm text-gray-600">Set a new secure password for your account.</p>
       </div>
 
       {error ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {error}
-        </div>
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</div>
+      ) : null}
+      {success ? (
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-primary">{success}</div>
       ) : null}
 
       <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-black/10 bg-white p-6">
-        <div className="space-y-1">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Email Address</label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            required
-            className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)]"
-          />
-        </div>
-
         <div className="space-y-2">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Password</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">New Password</label>
           <div className="relative">
             <input
               value={password}
@@ -116,7 +120,7 @@ export default function SignupPage() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Confirm Password</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Confirm New Password</label>
           <div className="relative">
             <input
               value={confirmPassword}
@@ -136,11 +140,11 @@ export default function SignupPage() {
         </div>
 
         <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-sm font-extrabold disabled:opacity-50">
-          {loading ? "Creating account..." : "Sign Up"}
+          {loading ? "Resetting..." : "Reset Password"}
         </button>
 
         <div className="text-center text-xs text-gray-600">
-          Already have an account?{" "}
+          Back to{" "}
           <Link href="/login" className="font-extrabold text-primary hover:underline">
             Log in
           </Link>
