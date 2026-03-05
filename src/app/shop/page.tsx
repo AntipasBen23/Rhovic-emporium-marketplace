@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import { normalizeProduct, type CatalogProduct, type Category, normalizeCategories } from "@/lib/catalog";
+import { useCartStore } from "@/store/cart";
 
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -14,6 +15,7 @@ function formatNGN(amount: number) {
 }
 
 export default function ShopPage() {
+  const addItem = useCartStore((s) => s.addItem);
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("all");
   const [products, setProducts] = useState<CatalogProduct[]>([]);
@@ -96,12 +98,11 @@ export default function ShopPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
-            <Link
+            <div
               key={p.id}
-              href={`/product/${p.id}`}
-              className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md"
+              className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md relative pb-16"
             >
-              <div className="p-4">
+              <Link href={`/product/${p.id}`} className="block p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-extrabold text-gray-900">{p.name}</div>
@@ -114,12 +115,28 @@ export default function ShopPage() {
                 <div className="mt-4 rounded-xl bg-black/5 p-3">
                   <div className="text-xs text-gray-600">Price</div>
                   <div className="mt-1 text-lg font-extrabold text-gray-900">{formatNGN(p.price)}</div>
+                  {p.compareAtPrice && p.compareAtPrice > p.price ? (
+                    <div className="mt-1 flex items-center gap-2 text-xs">
+                      <span className="line-through text-gray-400">{formatNGN(p.compareAtPrice)}</span>
+                      <span className="rounded bg-accent/20 px-1.5 py-0.5 font-bold text-orange-700">
+                        -{Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100)}%
+                      </span>
+                    </div>
+                  ) : null}
                   {p.pricingUnit ? <div className="text-xs text-gray-500">{p.pricingUnit}</div> : null}
                 </div>
-              </div>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => addItem({ id: p.id, name: p.name, price: p.price, unit: p.pricingUnit, vendor: "Vendor", quantity: 1 })}
+                className="absolute bottom-3 left-3 right-3 rounded-xl bg-accent px-4 py-3 text-sm font-black text-black opacity-0 translate-y-2 transition-all group-hover:opacity-100 group-hover:translate-y-0"
+              >
+                Add to cart
+              </button>
 
               <div className="h-[3px] bg-primary" />
-            </Link>
+            </div>
           ))}
         </div>
       )}

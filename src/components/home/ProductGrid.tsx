@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { normalizeProduct, type CatalogProduct, type Category, normalizeCategories } from "@/lib/catalog";
+import { useCartStore } from "@/store/cart";
 
 type ProductGridProps = {
   title?: string;
 };
 
 export default function ProductGrid({ title = "Curated Products" }: ProductGridProps) {
+  const addItem = useCartStore((s) => s.addItem);
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [catMap, setCatMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -83,12 +85,12 @@ export default function ProductGrid({ title = "Curated Products" }: ProductGridP
       ) : (
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:gap-10">
           {products.map((p, i) => (
-            <Link
+            <div
               key={p.id}
-              href={`/product/${p.id}`}
-              className="group flex flex-col hover-lift"
+              className="group flex flex-col hover-lift relative rounded-[2.5rem]"
               style={{ animationDelay: `${i * 100}ms` }}
             >
+              <Link href={`/product/${p.id}`} className="block">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-black/[0.02] dark:bg-white/[0.01] shadow-sm border border-black/5 dark:border-white/5">
                 {p.imageUrl ? (
                   <img
@@ -112,15 +114,33 @@ export default function ProductGrid({ title = "Curated Products" }: ProductGridP
                   {p.name}
                 </h3>
                 <div className="mt-3 flex items-center justify-between">
-                  <div className="text-xl font-black text-gray-950 dark:text-white">
-                    ₦{p.price?.toLocaleString()}
+                  <div>
+                    <div className="text-xl font-black text-gray-950 dark:text-white">
+                      ₦{p.price?.toLocaleString()}
+                    </div>
+                    {p.compareAtPrice && p.compareAtPrice > p.price ? (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="line-through text-gray-400">₦{p.compareAtPrice.toLocaleString()}</span>
+                        <span className="rounded bg-accent/20 px-1.5 py-0.5 font-bold text-orange-700">
+                          -{Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100)}%
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                   <div className="text-[10px] font-black text-primary uppercase tracking-widest">
                     Verified
                   </div>
                 </div>
               </div>
-            </Link>
+              </Link>
+              <button
+                type="button"
+                onClick={() => addItem({ id: p.id, name: p.name, price: p.price, unit: p.pricingUnit, vendor: "Vendor", quantity: 1 })}
+                className="absolute bottom-4 left-4 right-4 rounded-xl bg-accent px-4 py-3 text-sm font-black text-black opacity-0 translate-y-2 transition-all group-hover:opacity-100 group-hover:translate-y-0"
+              >
+                Add to cart
+              </button>
+            </div>
           ))}
         </div>
       )}

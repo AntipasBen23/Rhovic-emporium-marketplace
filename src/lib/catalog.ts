@@ -3,6 +3,7 @@ export type CatalogProduct = {
   name: string;
   description: string;
   price: number;
+  compareAtPrice?: number | null;
   pricingUnit?: string;
   stockQuantity?: number | string;
   categoryId?: string | null;
@@ -42,6 +43,10 @@ export function normalizeProduct(raw: unknown): CatalogProduct {
     name: readString(obj, "name", "Name"),
     description: readString(obj, "description", "Description"),
     price: readNumber(obj, "price", "Price"),
+    compareAtPrice: (() => {
+      const n = readNumber(obj, "compare_at_price", "CompareAtPrice");
+      return n > 0 ? n : null;
+    })(),
     pricingUnit: readString(obj, "pricing_unit", "PricingUnit"),
     stockQuantity: readString(obj, "stock_quantity", "StockQuantity") || readNumber(obj, "stock_quantity", "StockQuantity"),
     categoryId: categoryId || null,

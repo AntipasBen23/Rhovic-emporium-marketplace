@@ -4,9 +4,14 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useCartStore } from "@/store/cart";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useAuthStore } from "@/store/auth";
 
 export default function Header() {
   const [query, setQuery] = useState("");
+  const [showAccount, setShowAccount] = useState(false);
+  const token = useAuthStore((s) => s.token);
+  const role = useAuthStore((s) => s.role);
+  const logout = useAuthStore((s) => s.logout);
 
   // Zustand selectors
   const itemCount = useCartStore((s) => s.count());
@@ -51,6 +56,43 @@ export default function Header() {
 
         {/* Actions */}
         <nav className="flex items-center gap-4">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowAccount((s) => !s)}
+              className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2.5 text-sm font-black text-gray-900 hover:bg-black/5 dark:border-white/10 dark:text-white"
+            >
+              Account
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+            {showAccount && (
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-black/10 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-black">
+                {!token ? (
+                  <>
+                    <Link href="/login" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Login</Link>
+                    <Link href="/signup" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Sign up</Link>
+                  </>
+                ) : (
+                  <>
+                    {role === "vendor" ? (
+                      <Link href="/vendor/dashboard" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Vendor dashboard</Link>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        logout();
+                        setShowAccount(false);
+                      }}
+                      className="block w-full text-left rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      Logout
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-1 sm:gap-2">
             <ThemeToggle />
 
