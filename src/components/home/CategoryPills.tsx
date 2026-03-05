@@ -1,26 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import { normalizeCategories, type Category } from "@/lib/catalog";
 
 type CategoryPillsProps = {
   categories?: string[];
 };
 
-const defaultCategories = [
-  "All",
-  "Fashion",
-  "Electronics",
-  "Beauty",
-  "Home",
-  "Industrial",
-  "Fabrics",
-];
-
 export default function CategoryPills({
-  categories = defaultCategories,
+  categories = ["All"],
 }: CategoryPillsProps) {
   const [active, setActive] = useState(categories[0] ?? "All");
+  const [items, setItems] = useState<string[]>(categories);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await api.get<{ items: unknown[] }>("/categories");
+        const cats: Category[] = normalizeCategories(res?.items || []);
+        const names = cats.map((c) => c.name);
+        setItems(["All", ...names]);
+      } catch {
+        setItems(categories);
+      }
+    }
+    load();
+  }, [categories]);
 
   return (
     <section className="space-y-6 animate-fade-up delay-300">
@@ -37,7 +44,7 @@ export default function CategoryPills({
       </div>
 
       <div className="flex flex-wrap gap-2.5">
-        {categories.map((c, i) => {
+        {items.map((c, i) => {
           const isActive = c === active;
           return (
             <button

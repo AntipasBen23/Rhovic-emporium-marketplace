@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import type { Category } from "@/lib/catalog";
 
 type Tab = "Products" | "Orders" | "Payouts";
 
@@ -50,7 +51,9 @@ export default function VendorDashboardPage() {
   const [newStock, setNewStock] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [newCategoryId, setNewCategoryId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     if (token) {
@@ -63,6 +66,8 @@ export default function VendorDashboardPage() {
       setLoading(true);
       const prodData = await api.get<Product[]>("/vendor/products");
       setProducts(Array.isArray(prodData) ? prodData : []);
+      const categoriesRes = await api.get<{ items: Category[] }>("/categories");
+      setCategories(Array.isArray(categoriesRes?.items) ? categoriesRes.items : []);
 
       // Orders placeholder for now as backend might need more wiring
       setOrders([]);
@@ -115,6 +120,7 @@ export default function VendorDashboardPage() {
     setIsSubmitting(true);
     try {
       await api.post("/vendor/products", {
+        category_id: newCategoryId || null,
         name: newName,
         price: parseInt(newPrice),
         stock_quantity: newStock,
@@ -145,6 +151,7 @@ export default function VendorDashboardPage() {
     setNewStock("");
     setNewDesc("");
     setNewImageUrl("");
+    setNewCategoryId("");
   }
 
   if (!token) {
@@ -321,6 +328,20 @@ export default function VendorDashboardPage() {
                   className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none dark:bg-black/20 dark:border-white/10 dark:text-white dark:placeholder-gray-500"
                   placeholder="e.g. Ankara Fabric"
                 />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500">Category</label>
+                <select
+                  value={newCategoryId}
+                  onChange={(e) => setNewCategoryId(e.target.value)}
+                  className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none dark:bg-black/20 dark:border-white/10 dark:text-white"
+                >
+                  <option value="">Select category</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

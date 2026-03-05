@@ -3,33 +3,15 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  pricing_unit?: string;
-  category?: string;
-  image_url?: string;
-  status: string;
-};
+import { normalizeProduct, type CatalogProduct, type Category, normalizeCategories } from "@/lib/catalog";
 
 type ProductGridProps = {
   title?: string;
 };
 
-function formatNGN(amount: number) {
-  return new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-export default function ProductGrid({
-  title = "Popular right now",
-}: ProductGridProps) {
-  const [products, setProducts] = useState<Product[]>([]);
+export default function ProductGrid({ title = "Curated Products" }: ProductGridProps) {
+  const [products, setProducts] = useState<CatalogProduct[]>([]);
+  const [catMap, setCatMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,8 +21,21 @@ export default function ProductGrid({
   async function fetchProducts() {
     try {
       setLoading(true);
-      const data = await api.get<Product[]>("/products");
-      setProducts(Array.isArray(data) ? data : []);
+      const [productsData, categoriesData] = await Promise.all([
+        api.get<unknown[]>("/products"),
+        api.get<{ items: unknown[] }>("/categories"),
+      ]);
+
+      const items = Array.isArray(productsData)
+        ? productsData.map(normalizeProduct).filter((p) => !!p.id)
+        : [];
+
+      const categories: Category[] = normalizeCategories(categoriesData?.items || []);
+      const map: Record<string, string> = {};
+      for (const c of categories) map[c.id] = c.name;
+
+      setCatMap(map);
+      setProducts(items);
     } catch (err) {
       console.error("Failed to fetch products:", err);
     } finally {
@@ -53,10 +48,10 @@ export default function ProductGrid({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           <h2 className="text-3xl font-black tracking-tight text-gray-950 font-heading dark:text-white sm:text-4xl">
-            Curated Products
+            {title}
           </h2>
           <p className="max-w-md text-base font-semibold text-gray-700 dark:text-gray-400">
-            Selected items from our most trusted and verified vendors, vetted for quality and performance.
+            Selected items from verified vendors.
           </p>
         </div>
         <Link
@@ -78,11 +73,11 @@ export default function ProductGrid({
             </div>
           ))}
         </div>
-      ) : !products || products.length === 0 ? (
+      ) : products.length === 0 ? (
         <div className="flex h-72 items-center justify-center rounded-[3rem] border-2 border-dashed border-black/5 dark:border-white/5 bg-black/[0.01] dark:bg-white/[0.01]">
           <div className="text-center space-y-3">
-            <div className="text-xl font-black text-gray-300 dark:text-gray-700 font-heading">The catalog is quiet...</div>
-            <p className="text-sm font-medium text-gray-500">New arrivals are expected shortly. Check back soon.</p>
+            <div className="text-xl font-black text-gray-300 dark:text-gray-700 font-heading">No products yet</div>
+            <p className="text-sm font-medium text-gray-500">Vendors have not published items yet.</p>
           </div>
         </div>
       ) : (
@@ -95,9 +90,9 @@ export default function ProductGrid({
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-black/[0.02] dark:bg-white/[0.01] shadow-sm border border-black/5 dark:border-white/5">
-                {p.image_url ? (
+                {p.imageUrl ? (
                   <img
-                    src={p.image_url}
+                    src={p.imageUrl}
                     alt={p.name}
                     className="h-full w-full object-cover transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) group-hover:scale-110"
                   />
@@ -107,23 +102,11 @@ export default function ProductGrid({
                     <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Archive</span>
                   </div>
                 )}
-
-                <div className="absolute top-5 left-5">
-                  <span className="inline-flex rounded-full glass-panel px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-gray-950 dark:text-white shadow-premium border border-white/20">
-                    New Era
-                  </span>
-                </div>
-
-                <div className="absolute bottom-4 right-4 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  <div className="rounded-2xl bg-white p-3 text-primary shadow-2xl dark:bg-black">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                  </div>
-                </div>
               </div>
 
               <div className="flex flex-1 flex-col py-6 px-1">
                 <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-primary">
-                  {p.category || "RHOVIC SELECTION"}
+                  {p.categoryId ? (catMap[p.categoryId] || "RHOVIC SELECTION") : "RHOVIC SELECTION"}
                 </div>
                 <h3 className="text-lg font-black text-gray-950 dark:text-white font-heading group-hover:text-primary transition-colors line-clamp-1 leading-tight">
                   {p.name}
