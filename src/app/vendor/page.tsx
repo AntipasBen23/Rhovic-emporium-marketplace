@@ -45,7 +45,7 @@ export default function VendorEntryPage() {
   }, [token, router]);
 
   if (loading) {
-    return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600">Checking vendor status...</div>;
+    return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">Checking vendor status...</div>;
   }
 
   if (error) {
@@ -55,12 +55,12 @@ export default function VendorEntryPage() {
   if (application?.has_application && application.status === "pending") {
     return (
       <div className="space-y-6">
-        <section className="rounded-2xl border border-yellow-200 bg-yellow-50 p-6">
-          <h1 className="text-2xl font-extrabold text-gray-900">Application Submitted</h1>
-          <p className="mt-2 text-sm text-gray-700">
+      <section className="rounded-2xl border border-yellow-200 bg-yellow-50 p-6">
+          <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-900">Application Submitted</h1>
+          <p className="mt-2 text-sm text-gray-700 dark:text-gray-800">
             Your vendor application is successful and currently awaiting admin approval.
           </p>
-          <p className="mt-1 text-sm text-gray-700">
+          <p className="mt-1 text-sm text-gray-700 dark:text-gray-800">
             Shop name: <span className="font-bold">{application.business_name || "N/A"}</span>
           </p>
           <div className="mt-4">
@@ -74,7 +74,7 @@ export default function VendorEntryPage() {
   if (application?.has_application && application.status === "rejected") {
     return (
       <div className="space-y-6">
-        <section className="rounded-2xl border border-red-200 bg-red-50 p-6">
+      <section className="rounded-2xl border border-red-200 bg-red-50 p-6">
           <h1 className="text-2xl font-extrabold text-gray-900">Application Rejected</h1>
           <p className="mt-2 text-sm text-gray-700">Your previous vendor application was rejected. You can re-apply below.</p>
           <div className="mt-4">
@@ -87,9 +87,9 @@ export default function VendorEntryPage() {
 
   return (
     <div className="space-y-8">
-      <section className="overflow-hidden rounded-2xl border border-black/10 bg-white p-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Sell on RHOVIC Marketplace</h1>
-        <p className="mt-2 text-sm text-gray-600">
+      <section className="overflow-hidden rounded-2xl border border-black/10 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">Sell on RHOVIC Marketplace</h1>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Complete your vendor application to list products, manage stock, and receive payouts.
         </p>
         <div className="mt-6">

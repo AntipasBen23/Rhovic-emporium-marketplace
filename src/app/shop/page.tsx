@@ -59,11 +59,11 @@ export default function ShopPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-black/10 bg-white p-5">
+      <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">Shop</h1>
-            <p className="mt-1 text-sm text-gray-600">Browse real products published by vendors.</p>
+            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">Shop</h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Browse real products published by vendors.</p>
           </div>
           <Link href="/" className="text-sm font-semibold text-primary hover:underline">← Back to home</Link>
         </div>
@@ -73,13 +73,13 @@ export default function ShopPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search products..."
-            className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)]"
+            className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:border-white/10 dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500"
           />
 
           <select
             value={cat}
             onChange={(e) => setCat(e.target.value)}
-            className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20"
+            className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 dark:border-white/10 dark:bg-black/20 dark:text-white"
           >
             <option value="all">All categories</option>
             {categories.map((c) => (
@@ -87,34 +87,34 @@ export default function ShopPage() {
             ))}
           </select>
 
-          <div className="rounded-xl bg-black/5 p-3 text-sm text-gray-700">
-            Showing <span className="font-extrabold text-gray-900">{filtered.length}</span> items
+          <div className="rounded-xl bg-black/5 p-3 text-sm text-gray-700 dark:bg-white/5 dark:text-gray-300">
+            Showing <span className="font-extrabold text-gray-900 dark:text-white">{filtered.length}</span> items
           </div>
         </div>
       </div>
 
       {loading ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600">Loading products...</div>
+        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">Loading products...</div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
             <div
               key={p.id}
-              className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md relative pb-16"
+              className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-md relative pb-16 dark:border-white/10 dark:bg-white/5"
             >
               <Link href={`/product/${p.id}`} className="block p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-extrabold text-gray-900">{p.name}</div>
-                    <div className="mt-1 text-xs text-gray-600">
+                    <div className="truncate text-sm font-extrabold text-gray-900 dark:text-white">{p.name}</div>
+                    <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
                       {p.categoryId ? (catMap[p.categoryId] || "Uncategorized") : "Uncategorized"}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-xl bg-black/5 p-3">
-                  <div className="text-xs text-gray-600">Price</div>
-                  <div className="mt-1 text-lg font-extrabold text-gray-900">{formatNGN(p.price)}</div>
+                <div className="mt-4 rounded-xl bg-black/5 p-3 dark:bg-white/5">
+                  <div className="text-xs text-gray-600 dark:text-gray-400">Price</div>
+                  <div className="mt-1 text-lg font-extrabold text-gray-900 dark:text-white">{formatNGN(p.price)}</div>
                   {p.compareAtPrice && p.compareAtPrice > p.price ? (
                     <div className="mt-1 flex items-center gap-2 text-xs">
                       <span className="line-through text-gray-400">{formatNGN(p.compareAtPrice)}</span>
@@ -123,7 +123,7 @@ export default function ShopPage() {
                       </span>
                     </div>
                   ) : null}
-                  {p.pricingUnit ? <div className="text-xs text-gray-500">{p.pricingUnit}</div> : null}
+                  {p.pricingUnit ? <div className="text-xs text-gray-500 dark:text-gray-400">{p.pricingUnit}</div> : null}
                 </div>
               </Link>
 

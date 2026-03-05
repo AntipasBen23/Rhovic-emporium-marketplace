@@ -79,8 +79,8 @@ export default function ResetPasswordPage() {
   return (
     <div className="mx-auto max-w-md space-y-6 pt-10">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Reset Password</h1>
-        <p className="text-sm text-gray-600">Set a new secure password for your account.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">Reset Password</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Set a new secure password for your account.</p>
       </div>
 
       {error ? (
@@ -90,9 +90,9 @@ export default function ResetPasswordPage() {
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-primary">{success}</div>
       ) : null}
 
-      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-black/10 bg-white p-6">
+      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-[#0f1814]">
         <div className="space-y-2">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">New Password</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider dark:text-gray-100">New Password</label>
           <div className="relative">
             <input
               value={password}
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
             <button
               type="button"
               onClick={() => setShowPassword((s) => !s)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700 dark:border-white/10 dark:text-gray-100"
             >
               {showPassword ? "Hide" : "Show"}
             </button>
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Confirm New Password</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider dark:text-gray-100">Confirm New Password</label>
           <div className="relative">
             <input
               value={confirmPassword}
@@ -132,7 +132,7 @@ export default function ResetPasswordPage() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword((s) => !s)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700 dark:border-white/10 dark:text-gray-100"
             >
               {showConfirmPassword ? "Hide" : "Show"}
             </button>
@@ -143,7 +143,7 @@ export default function ResetPasswordPage() {
           {loading ? "Resetting..." : "Reset Password"}
         </button>
 
-        <div className="text-center text-xs text-gray-600">
+        <div className="text-center text-xs text-gray-600 dark:text-gray-400">
           Back to{" "}
           <Link href="/login" className="font-extrabold text-primary hover:underline">
             Log in

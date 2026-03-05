@@ -89,13 +89,13 @@ export default function Header() {
             >
                 {!token ? (
                   <>
-                    <Link onClick={() => setShowAccount(false)} href="/login" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Login</Link>
-                    <Link onClick={() => setShowAccount(false)} href="/signup" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Sign up</Link>
+                    <Link onClick={() => setShowAccount(false)} href="/login" className="block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10">Login</Link>
+                    <Link onClick={() => setShowAccount(false)} href="/signup" className="block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10">Sign up</Link>
                   </>
                 ) : (
                   <>
                     {role === "vendor" ? (
-                      <Link onClick={() => setShowAccount(false)} href="/vendor/dashboard" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Vendor dashboard</Link>
+                      <Link onClick={() => setShowAccount(false)} href="/vendor/dashboard" className="block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10">Vendor dashboard</Link>
                     ) : null}
                     <button
                       type="button"

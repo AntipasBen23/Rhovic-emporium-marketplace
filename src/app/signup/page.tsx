@@ -65,8 +65,8 @@ export default function SignupPage() {
   return (
     <div className="mx-auto max-w-md space-y-6 pt-10">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Create account</h1>
-        <p className="text-sm text-gray-600">Sign up, then continue your vendor application.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">Create account</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Sign up, then continue your vendor application.</p>
       </div>
 
       {error ? (
@@ -75,9 +75,9 @@ export default function SignupPage() {
         </div>
       ) : null}
 
-      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-black/10 bg-white p-6">
+      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-[#0f1814]">
         <div className="space-y-1">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Email Address</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider dark:text-gray-100">Email Address</label>
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -88,7 +88,7 @@ export default function SignupPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Password</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider dark:text-gray-100">Password</label>
           <div className="relative">
             <input
               value={password}
@@ -100,7 +100,7 @@ export default function SignupPage() {
             <button
               type="button"
               onClick={() => setShowPassword((s) => !s)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700 dark:border-white/10 dark:text-gray-100"
             >
               {showPassword ? "Hide" : "Show"}
             </button>
@@ -116,7 +116,7 @@ export default function SignupPage() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Confirm Password</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider dark:text-gray-100">Confirm Password</label>
           <div className="relative">
             <input
               value={confirmPassword}
@@ -128,7 +128,7 @@ export default function SignupPage() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword((s) => !s)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-bold text-gray-700 dark:border-white/10 dark:text-gray-100"
             >
               {showConfirmPassword ? "Hide" : "Show"}
             </button>
@@ -139,7 +139,7 @@ export default function SignupPage() {
           {loading ? "Creating account..." : "Sign Up"}
         </button>
 
-        <div className="text-center text-xs text-gray-600">
+        <div className="text-center text-xs text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
           <Link href="/login" className="font-extrabold text-primary hover:underline">
             Log in

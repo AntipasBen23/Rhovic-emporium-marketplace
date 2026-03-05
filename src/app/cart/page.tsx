@@ -47,22 +47,22 @@ export default function CartPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
             Your cart
           </h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Multi-vendor cart supported. Checkout will handle split logic later.
           </p>
         </div>
         <Link href="/shop" className="text-sm font-semibold text-primary hover:underline">
-          ← Continue shopping
+          Back to shop
         </Link>
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="text-lg font-extrabold text-gray-900">Cart is empty</div>
-          <p className="mt-2 text-sm text-gray-600">
+        <div className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
+          <div className="text-lg font-extrabold text-gray-900 dark:text-white">Cart is empty</div>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Add items from the shop, then come back here to checkout.
           </p>
           <div className="mt-4">
@@ -73,31 +73,29 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Items */}
-          <section className="lg:col-span-2 space-y-4">
+          <section className="space-y-4 lg:col-span-2">
             {grouped.map(([vendor, vItems]) => (
-              <div key={vendor} className="overflow-hidden rounded-2xl border border-black/10 bg-white">
-                <div className="flex items-center justify-between bg-black/5 px-5 py-4">
-                  <div className="text-sm font-extrabold text-gray-900">{vendor}</div>
+              <div key={vendor} className="overflow-hidden rounded-2xl border border-black/10 bg-white dark:border-white/10 dark:bg-white/5">
+                <div className="flex items-center justify-between bg-black/5 px-5 py-4 dark:bg-white/5">
+                  <div className="text-sm font-extrabold text-gray-900 dark:text-white">{vendor}</div>
                   <span className="rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-white">
                     Vendor items: {vItems.length}
                   </span>
                 </div>
 
-                <div className="divide-y divide-black/10">
+                <div className="divide-y divide-black/10 dark:divide-white/10">
                   {vItems.map((item) => {
                     const line = item.price * item.quantity;
-
                     return (
                       <div key={item.id} className="p-5">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
-                            <div className="truncate text-sm font-extrabold text-gray-900">
+                            <div className="truncate text-sm font-extrabold text-gray-900 dark:text-white">
                               {item.name}
                             </div>
-                            <div className="mt-1 text-xs text-gray-600">
+                            <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
                               {formatNGN(item.price)}{" "}
-                              {item.unit ? <span className="text-gray-500">• {item.unit}</span> : null}
+                              {item.unit ? <span className="text-gray-500 dark:text-gray-400">| {item.unit}</span> : null}
                             </div>
                           </div>
 
@@ -115,14 +113,14 @@ export default function CartPage() {
                                 e.currentTarget.value = cleaned;
                               }}
                               inputMode="decimal"
-                              className="w-28 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)]"
+                              className="w-28 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:border-white/10 dark:bg-black/20 dark:text-white"
                               aria-label="Quantity"
                             />
 
                             <button
                               type="button"
                               onClick={() => removeItem(item.id)}
-                              className="rounded-md border border-black/10 px-3 py-2 text-sm font-extrabold text-gray-900 transition hover:bg-black/5"
+                              className="rounded-md border border-black/10 px-3 py-2 text-sm font-extrabold text-gray-900 transition hover:bg-black/5 dark:border-white/10 dark:text-white dark:hover:bg-white/5"
                             >
                               Remove
                             </button>
@@ -130,10 +128,8 @@ export default function CartPage() {
                         </div>
 
                         <div className="mt-3 flex items-center justify-between">
-                          <span className="text-xs text-gray-600">Line total</span>
-                          <span className="text-sm font-extrabold text-gray-900">
-                            {formatNGN(line)}
-                          </span>
+                          <span className="text-xs text-gray-600 dark:text-gray-400">Line total</span>
+                          <span className="text-sm font-extrabold text-gray-900 dark:text-white">{formatNGN(line)}</span>
                         </div>
                       </div>
                     );
@@ -145,11 +141,10 @@ export default function CartPage() {
             ))}
           </section>
 
-          {/* Summary */}
           <aside className="space-y-4">
-            <div className="rounded-2xl border border-black/10 bg-white p-5">
-              <div className="text-xs text-gray-600">Cart total</div>
-              <div className="mt-2 text-2xl font-extrabold text-gray-900">
+            <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+              <div className="text-xs text-gray-600 dark:text-gray-400">Cart total</div>
+              <div className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
                 {formatNGN(total)}
               </div>
 
@@ -162,13 +157,13 @@ export default function CartPage() {
                 </button>
               </div>
 
-              <div className="mt-4 rounded-xl bg-black/5 p-3 text-xs text-gray-700">
+              <div className="mt-4 rounded-xl bg-black/5 p-3 text-xs text-gray-700 dark:bg-white/5 dark:text-gray-300">
                 Shipping is vendor-configured and will be shown at checkout.
               </div>
             </div>
 
-            <div className="rounded-2xl bg-black/5 p-5 text-sm text-gray-700">
-              <div className="font-extrabold text-gray-900">Marketplace note</div>
+            <div className="rounded-2xl bg-black/5 p-5 text-sm text-gray-700 dark:bg-white/5 dark:text-gray-300">
+              <div className="font-extrabold text-gray-900 dark:text-white">Marketplace note</div>
               <div className="mt-2 leading-6">
                 Items can come from multiple vendors. RHOVIC handles the transaction
                 flow and commission tracking behind the scenes.

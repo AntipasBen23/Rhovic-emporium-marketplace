@@ -88,14 +88,14 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   }
 
   if (loading) {
-    return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600">Loading product...</div>;
+    return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">Loading product...</div>;
   }
 
   if (!product || !product.id) {
     return (
       <div className="space-y-4">
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <h1 className="text-xl font-extrabold text-gray-900">Product not found</h1>
+        <div className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
+          <h1 className="text-xl font-extrabold text-gray-900 dark:text-white">Product not found</h1>
           <div className="mt-4">
             <Link href="/shop" className="btn-primary">Back to shop</Link>
           </div>
@@ -106,36 +106,36 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
         <Link href="/" className="font-semibold text-primary hover:underline">Home</Link>
         <span>›</span>
         <Link href="/shop" className="font-semibold text-primary hover:underline">Shop</Link>
         <span>›</span>
-        <span className="text-gray-800">{product.name}</span>
+        <span className="text-gray-800 dark:text-gray-200">{product.name}</span>
       </div>
 
       {toast ? (
-        <div className="rounded-2xl border border-black/10 bg-black/5 p-4 text-sm text-gray-800">
+        <div className="rounded-2xl border border-black/10 bg-black/5 p-4 text-sm text-gray-800 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
           <span className="font-extrabold text-primary">RHOVIC:</span> {toast}
         </div>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1.4fr_0.9fr]">
-        <section className="rounded-2xl border border-black/10 bg-white p-5">
+        <section className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
           {product.imageUrl ? (
-            <img src={product.imageUrl} alt={product.name} className="h-[380px] w-full rounded-xl object-cover border border-black/10" />
+            <img src={product.imageUrl} alt={product.name} className="h-[380px] w-full rounded-xl object-cover border border-black/10 dark:border-white/10" />
           ) : (
-            <div className="h-[380px] w-full rounded-xl border border-dashed border-black/10 bg-black/5" />
+            <div className="h-[380px] w-full rounded-xl border border-dashed border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5" />
           )}
         </section>
 
-        <section className="rounded-2xl border border-black/10 bg-white p-6 space-y-4">
-          <h1 className="text-3xl font-black tracking-tight text-gray-900">{product.name}</h1>
-          <div className="text-sm text-gray-600">
-            Category: <span className="font-semibold text-gray-900">{product.categoryId ? (catMap[product.categoryId] || "Uncategorized") : "Uncategorized"}</span>
+        <section className="rounded-2xl border border-black/10 bg-white p-6 space-y-4 dark:border-white/10 dark:bg-white/5">
+          <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{product.name}</h1>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Category: <span className="font-semibold text-gray-900 dark:text-gray-100">{product.categoryId ? (catMap[product.categoryId] || "Uncategorized") : "Uncategorized"}</span>
           </div>
           <div className="flex items-end gap-3">
-            <div className="text-4xl font-black text-gray-900">{formatNGN(product.price)}</div>
+            <div className="text-4xl font-black text-gray-900 dark:text-white">{formatNGN(product.price)}</div>
             {product.compareAtPrice && product.compareAtPrice > product.price ? (
               <>
                 <div className="text-xl text-gray-400 line-through">{formatNGN(product.compareAtPrice)}</div>
@@ -143,36 +143,36 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </>
             ) : null}
           </div>
-          <div className="text-sm text-gray-600">
-            Unit: <span className="font-semibold text-gray-900">{product.pricingUnit || "unit"}</span>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Unit: <span className="font-semibold text-gray-900 dark:text-gray-100">{product.pricingUnit || "unit"}</span>
           </div>
-          <div className="pt-2 border-t border-black/10">
-            <h2 className="text-sm font-extrabold text-gray-900 mb-2">Product details</h2>
-            <p className="text-sm leading-7 text-gray-700 whitespace-pre-wrap">{product.description || "No description available."}</p>
+          <div className="pt-2 border-t border-black/10 dark:border-white/10">
+            <h2 className="mb-2 text-sm font-extrabold text-gray-900 dark:text-white">Product details</h2>
+            <p className="text-sm leading-7 text-gray-700 whitespace-pre-wrap dark:text-gray-300">{product.description || "No description available."}</p>
           </div>
         </section>
 
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-black/10 bg-white p-5">
-            <div className="text-xs text-gray-600">Order summary</div>
-            <div className="mt-2 text-lg font-extrabold text-gray-900">{formatNGN(lineTotal)}</div>
+          <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+            <div className="text-xs text-gray-600 dark:text-gray-400">Order summary</div>
+            <div className="mt-2 text-lg font-extrabold text-gray-900 dark:text-white">{formatNGN(lineTotal)}</div>
             <div className="mt-3 flex items-center gap-3">
               <input
                 value={qty}
                 onChange={(e) => setQty(e.target.value)}
                 onBlur={() => setQty(clampQty(qty))}
                 inputMode="decimal"
-                className="w-24 rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20"
+                className="w-24 rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 dark:border-white/10 dark:bg-black/20 dark:text-white"
                 aria-label="Quantity"
               />
               <button type="button" className="btn-accent flex-1" onClick={addCurrentToCart}>Add to cart</button>
             </div>
-            <div className="mt-3 text-xs text-gray-500">Secure checkout and transparent delivery updates.</div>
+            <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">Secure checkout and transparent delivery updates.</div>
           </div>
 
-          <div className="rounded-2xl border border-black/10 bg-white p-5">
-            <h3 className="text-sm font-extrabold text-gray-900">Specifications</h3>
-            <ul className="mt-3 space-y-2 text-sm text-gray-700">
+          <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+            <h3 className="text-sm font-extrabold text-gray-900 dark:text-white">Specifications</h3>
+            <ul className="mt-3 space-y-2 text-sm text-gray-700 dark:text-gray-300">
               <li>• Pricing unit: {product.pricingUnit || "unit"}</li>
               <li>• Product status: {product.status || "published"}</li>
               <li>• Category: {product.categoryId ? (catMap[product.categoryId] || "Uncategorized") : "Uncategorized"}</li>
@@ -181,16 +181,16 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         </aside>
       </div>
 
-      <section className="rounded-2xl border border-black/10 bg-white p-6">
-        <h2 className="text-2xl font-black text-gray-900">Customers also viewed</h2>
+      <section className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
+        <h2 className="text-2xl font-black text-gray-900 dark:text-white">Customers also viewed</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
           {related.map((p) => (
-            <Link key={p.id} href={`/product/${p.id}`} className="rounded-xl border border-black/10 p-3 hover:shadow-md transition">
-              <div className="h-28 w-full rounded-lg bg-black/5 overflow-hidden">
+            <Link key={p.id} href={`/product/${p.id}`} className="rounded-xl border border-black/10 p-3 transition hover:shadow-md dark:border-white/10">
+              <div className="h-28 w-full overflow-hidden rounded-lg bg-black/5 dark:bg-white/5">
                 {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover" /> : null}
               </div>
-              <div className="mt-2 text-xs font-bold text-gray-900 line-clamp-2">{p.name}</div>
-              <div className="mt-1 text-sm font-black text-gray-900">{formatNGN(p.price)}</div>
+              <div className="mt-2 line-clamp-2 text-xs font-bold text-gray-900 dark:text-white">{p.name}</div>
+              <div className="mt-1 text-sm font-black text-gray-900 dark:text-white">{formatNGN(p.price)}</div>
             </Link>
           ))}
         </div>

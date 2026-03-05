@@ -39,8 +39,8 @@ export default function ForgotPasswordPage() {
   return (
     <div className="mx-auto max-w-md space-y-6 pt-10">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Forgot Password</h1>
-        <p className="text-sm text-gray-600">Enter your email to reset your password.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">Forgot Password</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Enter your email to reset your password.</p>
       </div>
 
       {error ? (
@@ -50,9 +50,9 @@ export default function ForgotPasswordPage() {
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-primary">{message}</div>
       ) : null}
 
-      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-black/10 bg-white p-6">
+      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-[#0f1814]">
         <div className="space-y-1">
-          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">Email Address</label>
+          <label className="text-xs font-extrabold text-gray-900 uppercase tracking-wider dark:text-gray-100">Email Address</label>
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
           {loading ? "Preparing reset..." : "Continue"}
         </button>
 
-        <div className="text-center text-xs text-gray-600">
+        <div className="text-center text-xs text-gray-600 dark:text-gray-400">
           Remembered your password?{" "}
           <Link href="/login" className="font-extrabold text-primary hover:underline">
             Log in

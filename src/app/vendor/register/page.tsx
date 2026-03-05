@@ -157,7 +157,7 @@ export default function VendorRegisterPage() {
   }
 
   if (loadingState) {
-    return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600">Checking vendor status...</div>;
+    return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">Checking vendor status...</div>;
   }
 
   if (application?.has_application && application.status === "pending") {
