@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 
 export default function SignupPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,7 +25,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await api.post("/auth/register", { email, password, role: "buyer" });
-      const next = searchParams.get("next") || "/";
+      const next = new URLSearchParams(window.location.search).get("next") || "/";
       router.push(`/login?next=${encodeURIComponent(next)}`);
     } catch (err: any) {
       setError(err.message || "Sign up failed.");
@@ -88,7 +87,7 @@ export default function SignupPage() {
 
         <div className="text-center text-xs text-gray-600">
           Already have an account?{" "}
-          <Link href={`/login${searchParams.get("next") ? `?next=${encodeURIComponent(searchParams.get("next") || "")}` : ""}`} className="font-extrabold text-primary hover:underline">
+          <Link href="/login" className="font-extrabold text-primary hover:underline">
             Log in
           </Link>
         </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 
@@ -12,7 +12,6 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const searchParams = useSearchParams();
     const setAuth = useAuthStore((state) => state.setAuth);
 
     async function onSubmit(e: React.FormEvent) {
@@ -30,7 +29,7 @@ export default function LoginPage() {
             const payload = JSON.parse(atob(res.access_token.split(".")[1]));
             setAuth(res.access_token, payload.role);
 
-            const next = searchParams.get("next");
+            const next = new URLSearchParams(window.location.search).get("next");
             if (next) {
                 router.push(next);
             } else if (payload.role === "vendor") {
