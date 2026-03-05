@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCartStore } from "@/store/cart";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useAuthStore } from "@/store/auth";
@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/auth";
 export default function Header() {
   const [query, setQuery] = useState("");
   const [showAccount, setShowAccount] = useState(false);
+  const accountRef = useRef<HTMLDivElement | null>(null);
   const token = useAuthStore((s) => s.token);
   const role = useAuthStore((s) => s.role);
   const logout = useAuthStore((s) => s.logout);
@@ -23,6 +24,24 @@ export default function Header() {
       Math.round(itemCount) === itemCount ? String(itemCount) : itemCount.toFixed(2);
     return `Cart (${pretty})`;
   }, [itemCount]);
+
+  useEffect(() => {
+    function onDocMouseDown(e: MouseEvent) {
+      const target = e.target as Node;
+      if (accountRef.current && !accountRef.current.contains(target)) {
+        setShowAccount(false);
+      }
+    }
+    function onEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") setShowAccount(false);
+    }
+    document.addEventListener("mousedown", onDocMouseDown);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocMouseDown);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 glass-panel shadow-premium animate-fade-up border-b border-black/5 dark:border-white/5 transition-all duration-300">
@@ -56,7 +75,7 @@ export default function Header() {
 
         {/* Actions */}
         <nav className="flex items-center gap-4">
-          <div className="relative">
+          <div className="relative" ref={accountRef}>
             <button
               type="button"
               onClick={() => setShowAccount((s) => !s)}
@@ -65,17 +84,18 @@ export default function Header() {
               Account
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
             </button>
-            {showAccount && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-black/10 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-black">
+            <div
+              className={`absolute left-1/2 z-40 mt-2 w-40 -translate-x-1/2 rounded-xl border border-black/10 bg-white p-1.5 shadow-xl transition-all duration-200 dark:border-white/10 dark:bg-black ${showAccount ? "pointer-events-auto translate-y-0 opacity-100 scale-100" : "pointer-events-none -translate-y-1 opacity-0 scale-95"}`}
+            >
                 {!token ? (
                   <>
-                    <Link href="/login" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Login</Link>
-                    <Link href="/signup" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Sign up</Link>
+                    <Link onClick={() => setShowAccount(false)} href="/login" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Login</Link>
+                    <Link onClick={() => setShowAccount(false)} href="/signup" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Sign up</Link>
                   </>
                 ) : (
                   <>
                     {role === "vendor" ? (
-                      <Link href="/vendor/dashboard" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Vendor dashboard</Link>
+                      <Link onClick={() => setShowAccount(false)} href="/vendor/dashboard" className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10">Vendor dashboard</Link>
                     ) : null}
                     <button
                       type="button"
@@ -89,8 +109,7 @@ export default function Header() {
                     </button>
                   </>
                 )}
-              </div>
-            )}
+            </div>
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">

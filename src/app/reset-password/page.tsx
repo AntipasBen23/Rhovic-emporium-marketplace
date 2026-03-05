@@ -99,7 +99,7 @@ export default function ResetPasswordPage() {
               onChange={(e) => setPassword(e.target.value)}
               type={showPassword ? "text" : "password"}
               required
-              className="w-full rounded-xl border border-black/10 px-4 py-3 pr-20 text-sm outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)]"
+              className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 pr-20 text-sm font-semibold text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500"
             />
             <button
               type="button"
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               type={showConfirmPassword ? "text" : "password"}
               required
-              className="w-full rounded-xl border border-black/10 px-4 py-3 pr-20 text-sm outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)]"
+              className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 pr-20 text-sm font-semibold text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500"
             />
             <button
               type="button"
