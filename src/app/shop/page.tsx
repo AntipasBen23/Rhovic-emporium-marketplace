@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { normalizeProduct, type CatalogProduct, type Category, normalizeCategories } from "@/lib/catalog";
 import { useCartStore } from "@/store/cart";
@@ -16,11 +17,37 @@ function formatNGN(amount: number) {
 
 export default function ShopPage() {
   const addItem = useCartStore((s) => s.addItem);
+  const router = useRouter();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("all");
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const initialQ = typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("q") || ""
+      : "";
+    setQ(initialQ);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const sp = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+      const cleaned = q.trim();
+      const current = (sp.get("q") || "").trim();
+      if (cleaned === current) return;
+      if (cleaned) {
+        sp.set("q", cleaned);
+      } else {
+        sp.delete("q");
+      }
+      const next = sp.toString();
+      router.replace(next ? `/shop?${next}` : "/shop");
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, [q, router]);
 
   useEffect(() => {
     async function load() {
