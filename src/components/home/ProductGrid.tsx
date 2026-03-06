@@ -87,7 +87,7 @@ export default function ProductGrid({ title = "Curated Products" }: ProductGridP
           {products.map((p, i) => (
             <div
               key={p.id}
-              className="group flex flex-col hover-lift relative rounded-[2.5rem]"
+              className="group relative flex flex-col rounded-[2.5rem] pb-20 hover-lift"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <Link href={`/product/${p.id}`} className="block">
@@ -136,7 +136,7 @@ export default function ProductGrid({ title = "Curated Products" }: ProductGridP
               <button
                 type="button"
                 onClick={() => addItem({ id: p.id, name: p.name, price: p.price, unit: p.pricingUnit, vendor: "Vendor", quantity: 1 })}
-                className="absolute bottom-4 left-4 right-4 rounded-xl bg-accent px-4 py-3 text-sm font-black text-black opacity-0 translate-y-2 transition-all group-hover:opacity-100 group-hover:translate-y-0"
+                className="absolute bottom-3 left-2 right-2 rounded-xl bg-accent px-5 py-3.5 text-sm font-black text-black opacity-0 translate-y-2 transition-all group-hover:opacity-100 group-hover:translate-y-0"
               >
                 Add to cart
               </button>
