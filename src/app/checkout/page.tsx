@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart";
+import { api } from "@/lib/api";
+import { useAuthStore } from "@/store/auth";
 
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -15,6 +18,8 @@ function formatNGN(amount: number) {
 export default function CheckoutPage() {
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
+  const token = useAuthStore((s) => s.token);
+  const router = useRouter();
 
   const total = useMemo(
     () => items.reduce((acc, i) => acc + i.price * i.quantity, 0),
@@ -26,30 +31,36 @@ export default function CheckoutPage() {
     return Array.from(set);
   }, [items]);
 
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [note, setNote] = useState("");
-  const [toast, setToast] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const canPay =
-    items.length > 0 &&
-    name.trim() &&
-    phone.trim() &&
-    email.trim() &&
-    address.trim();
+  const canCheckout = items.length > 0 && !!token && !isSubmitting;
 
-  function onPay() {
-    if (!canPay) {
-      setToast("Fill your details before paying.");
+  async function onCheckout() {
+    if (!token) {
+      router.push("/login?next=/checkout");
       return;
     }
-    setToast("Redirecting to Paystack (demo)...");
-    setTimeout(() => {
-      setToast("Payment success (demo). Order created. Cart cleared.");
+    if (items.length === 0) {
+      return;
+    }
+    setError("");
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        items: items.map((item) => ({
+          product_id: item.id,
+          quantity: String(item.quantity),
+        })),
+      };
+      const res = await api.post<{ orderId: string }>("/checkout", payload);
       clear();
-    }, 1200);
+      router.push(`/orders/${res.orderId}`);
+    } catch (err) {
+      setError((err as Error).message || "Checkout failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (items.length === 0) {
@@ -92,31 +103,37 @@ export default function CheckoutPage() {
         </Link>
       </div>
 
-      {toast ? (
-        <div className="rounded-2xl border border-black/10 bg-black/5 p-4 text-sm text-gray-800 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
-          <span className="font-extrabold text-primary">RHOVIC:</span> {toast}
+      {error ? (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+          {error}
         </div>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="space-y-4 lg:col-span-2">
           <div className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
-            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white">Buyer details</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:border-white/10 dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500" />
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:border-white/10 dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500" />
-              <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" type="email" className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] sm:col-span-2 dark:border-white/10 dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500" />
+            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white">Manual bank transfer</h2>
+            <div className="mt-3 text-sm leading-6 text-gray-700 dark:text-gray-300">
+              This checkout creates one master order and splits it into vendor orders automatically.
+              You will receive a unique payment reference on the next screen. Upload proof after transfer so admin can approve payment.
             </div>
           </div>
 
           <div className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
-            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white">Delivery address</h2>
-            <textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street, city, state, landmark..." className="mt-4 min-h-[110px] w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:border-white/10 dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500" />
-          </div>
-
-          <div className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
-            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white">Order note (optional)</h2>
-            <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Anything the vendor should know?" className="mt-4 min-h-[90px] w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:border-white/10 dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500" />
+            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white">Order items</h2>
+            <div className="mt-4 space-y-3">
+              {items.map((item) => (
+                <div key={item.id} className="flex items-center justify-between rounded-xl bg-black/5 px-4 py-3 dark:bg-white/5">
+                  <div className="min-w-0 pr-3">
+                    <div className="truncate text-sm font-extrabold text-gray-900 dark:text-white">{item.name}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">Qty: {item.quantity}</div>
+                  </div>
+                  <div className="text-sm font-extrabold text-gray-900 dark:text-white">
+                    {formatNGN(item.quantity * item.price)}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -138,17 +155,17 @@ export default function CheckoutPage() {
 
             <button
               type="button"
-              onClick={onPay}
-              disabled={!canPay}
+              onClick={onCheckout}
+              disabled={!canCheckout}
               className={`mt-4 inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-sm font-extrabold transition ${
-                canPay ? "bg-accent text-black hover:brightness-105" : "cursor-not-allowed bg-black/10 text-gray-500 dark:bg-white/10 dark:text-gray-400"
+                canCheckout ? "bg-accent text-black hover:brightness-105" : "cursor-not-allowed bg-black/10 text-gray-500 dark:bg-white/10 dark:text-gray-400"
               }`}
             >
-              Pay with Paystack
+              {isSubmitting ? "Creating order..." : token ? "Place order" : "Login to checkout"}
             </button>
 
             <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-              This is a demo checkout. Next step: backend-generated Paystack transaction and split allocation.
+              Payment is completed by bank transfer after order creation.
             </div>
           </div>
 

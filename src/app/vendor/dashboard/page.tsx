@@ -22,6 +22,20 @@ type Product = {
   description?: string;
 };
 
+type VendorOrder = {
+  id: string;
+  order_id: string;
+  vendor_order_number: string;
+  subtotal_amount: number;
+  commission_amount: number;
+  vendor_net_amount: number;
+  fulfillment_status: string;
+  payout_status: string;
+  payment_status: string;
+  payment_reference: string;
+  created_at: string;
+};
+
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -34,11 +48,13 @@ export default function VendorDashboardPage() {
   const [tab, setTab] = useState<Tab>("Products");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [ordersLoading, setOrdersLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [vendorOrders, setVendorOrders] = useState<VendorOrder[]>([]);
 
   const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
@@ -62,12 +78,15 @@ export default function VendorDashboardPage() {
   async function fetchData() {
     try {
       setLoading(true);
-      const [prodData, categoriesRes] = await Promise.all([
+      setOrdersLoading(true);
+      const [prodData, categoriesRes, vendorOrdersRes] = await Promise.all([
         api.get<Product[]>("/vendor/products"),
         api.get<{ items: Category[] }>("/categories"),
+        api.get<{ items: VendorOrder[] }>("/vendor/orders?limit=50"),
       ]);
       setProducts(Array.isArray(prodData) ? prodData : []);
       setCategories(Array.isArray(categoriesRes?.items) ? categoriesRes.items : []);
+      setVendorOrders(Array.isArray(vendorOrdersRes?.items) ? vendorOrdersRes.items : []);
     } catch (err: unknown) {
       const msg = String((err as { message?: string })?.message || "").toLowerCase();
       if (msg.includes("status 401")) {
@@ -80,14 +99,16 @@ export default function VendorDashboardPage() {
       }
     } finally {
       setLoading(false);
+      setOrdersLoading(false);
     }
   }
 
   const stats = useMemo(() => {
     const published = products.filter((p) => p.status === "published").length;
     const draft = products.filter((p) => p.status === "draft").length;
-    return { published, draft };
-  }, [products]);
+    const queuedPayouts = vendorOrders.filter((o) => o.payout_status === "queued").length;
+    return { published, draft, queuedPayouts };
+  }, [products, vendorOrders]);
 
   function resetForm() {
     setName("");
@@ -308,6 +329,66 @@ export default function VendorDashboardPage() {
               })
             )}
           </div>
+        </section>
+      ) : null}
+
+      {tab === "Orders" ? (
+        <section className="overflow-hidden rounded-2xl border border-black/10 bg-white dark:border-white/10 dark:bg-white/5">
+          <div className="flex items-center justify-between bg-black/5 px-5 py-4 dark:bg-white/5">
+            <div className="text-sm font-extrabold text-gray-900 dark:text-white">Vendor orders</div>
+          </div>
+          <div className="divide-y divide-black/10 dark:divide-white/10">
+            {ordersLoading ? (
+              <div className="p-8 text-sm text-gray-600 dark:text-gray-400">Loading orders...</div>
+            ) : vendorOrders.length === 0 ? (
+              <div className="p-8 text-sm text-gray-600 dark:text-gray-400">No vendor orders yet.</div>
+            ) : (
+              vendorOrders.map((order) => (
+                <div key={order.id} className="p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div className="text-sm font-extrabold text-gray-900 dark:text-white">{order.vendor_order_number}</div>
+                      <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">Ref: {order.payment_reference}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-extrabold text-gray-900 dark:text-white">{formatNGN(order.vendor_net_amount)}</div>
+                      <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">Net payable</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-black/10 px-3 py-1 text-[11px] font-bold text-gray-700 dark:bg-white/10 dark:text-gray-200">Fulfillment: {order.fulfillment_status}</span>
+                    <span className="rounded-full bg-black/10 px-3 py-1 text-[11px] font-bold text-gray-700 dark:bg-white/10 dark:text-gray-200">Payout: {order.payout_status}</span>
+                    <span className="rounded-full bg-black/10 px-3 py-1 text-[11px] font-bold text-gray-700 dark:bg-white/10 dark:text-gray-200">Payment: {order.payment_status}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      ) : null}
+
+      {tab === "Payouts" ? (
+        <section className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
+          <div className="text-sm font-extrabold text-gray-900 dark:text-white">Payout summary</div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl bg-black/5 p-4 dark:bg-white/5">
+              <div className="text-xs text-gray-600 dark:text-gray-400">Queued payouts</div>
+              <div className="mt-1 text-xl font-extrabold text-gray-900 dark:text-white">{stats.queuedPayouts}</div>
+            </div>
+            <div className="rounded-xl bg-black/5 p-4 dark:bg-white/5">
+              <div className="text-xs text-gray-600 dark:text-gray-400">Total net from orders</div>
+              <div className="mt-1 text-xl font-extrabold text-gray-900 dark:text-white">
+                {formatNGN(vendorOrders.reduce((acc, o) => acc + Number(o.vendor_net_amount || 0), 0))}
+              </div>
+            </div>
+            <div className="rounded-xl bg-black/5 p-4 dark:bg-white/5">
+              <div className="text-xs text-gray-600 dark:text-gray-400">Paid payouts</div>
+              <div className="mt-1 text-xl font-extrabold text-gray-900 dark:text-white">{vendorOrders.filter((o) => o.payout_status === "paid").length}</div>
+            </div>
+          </div>
+          <p className="mt-4 text-xs text-gray-600 dark:text-gray-400">
+            Detailed payout disbursement is managed by admin after payment approval.
+          </p>
         </section>
       ) : null}
 

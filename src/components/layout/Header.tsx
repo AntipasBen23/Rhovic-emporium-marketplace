@@ -215,6 +215,7 @@ export default function Header() {
                 </>
               ) : (
                 <>
+                  <Link onClick={() => setShowAccount(false)} href="/my-orders" className="block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10">My orders</Link>
                   {role === "vendor" ? (
                     <Link onClick={() => setShowAccount(false)} href="/vendor/dashboard" className="block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10">Vendor dashboard</Link>
                   ) : null}
