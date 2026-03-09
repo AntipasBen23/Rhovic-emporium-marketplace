@@ -14,20 +14,15 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             role: null,
             setAuth: (token, role) => {
-                if (typeof window !== "undefined") {
-                    localStorage.setItem("rhovic_token", token);
-                }
                 set({ token, role });
             },
             logout: () => {
-                if (typeof window !== "undefined") {
-                    localStorage.removeItem("rhovic_token");
-                }
                 set({ token: null, role: null });
             },
         }),
         {
             name: "rhovic-auth",
+            partialize: (state) => ({ role: state.role }),
         }
     )
 );

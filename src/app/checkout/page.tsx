@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart";
 import { api } from "@/lib/api";
-import { useAuthStore } from "@/store/auth";
 
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -18,7 +17,6 @@ function formatNGN(amount: number) {
 export default function CheckoutPage() {
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
-  const token = useAuthStore((s) => s.token);
   const router = useRouter();
 
   const total = useMemo(
@@ -34,13 +32,9 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const canCheckout = items.length > 0 && !!token && !isSubmitting;
+  const canCheckout = items.length > 0 && !isSubmitting;
 
   async function onCheckout() {
-    if (!token) {
-      router.push("/login?next=/checkout");
-      return;
-    }
     if (items.length === 0) {
       return;
     }
@@ -57,7 +51,12 @@ export default function CheckoutPage() {
       clear();
       router.push(`/orders/${res.orderId}`);
     } catch (err) {
-      setError((err as Error).message || "Checkout failed");
+      const message = (err as Error).message || "Checkout failed";
+      if (message.toLowerCase().includes("401")) {
+        router.push("/login?next=/checkout");
+        return;
+      }
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -161,7 +160,7 @@ export default function CheckoutPage() {
                 canCheckout ? "bg-accent text-black hover:brightness-105" : "cursor-not-allowed bg-black/10 text-gray-500 dark:bg-white/10 dark:text-gray-400"
               }`}
             >
-              {isSubmitting ? "Creating order..." : token ? "Place order" : "Login to checkout"}
+              {isSubmitting ? "Creating order..." : "Place order"}
             </button>
 
             <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">

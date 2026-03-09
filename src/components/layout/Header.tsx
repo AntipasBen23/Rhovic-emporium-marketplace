@@ -25,6 +25,7 @@ export default function Header() {
   const token = useAuthStore((s) => s.token);
   const role = useAuthStore((s) => s.role);
   const logout = useAuthStore((s) => s.logout);
+  const isLoggedIn = !!token || !!role;
 
   const itemCount = useCartStore((s) => s.count());
   const cartLabel = useMemo(() => {
@@ -208,7 +209,7 @@ export default function Header() {
             <div
               className={`absolute left-1/2 z-40 mt-2 w-40 -translate-x-1/2 rounded-xl border border-black/10 bg-white p-1.5 shadow-xl transition-all duration-200 dark:border-white/10 dark:bg-black ${showAccount ? "pointer-events-auto translate-y-0 scale-100 opacity-100" : "pointer-events-none -translate-y-1 scale-95 opacity-0"}`}
             >
-              {!token ? (
+              {!isLoggedIn ? (
                 <>
                   <Link onClick={() => setShowAccount(false)} href="/login" className="block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10">Login</Link>
                   <Link onClick={() => setShowAccount(false)} href="/signup" className="block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10">Sign up</Link>
@@ -221,7 +222,10 @@ export default function Header() {
                   ) : null}
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
+                      try {
+                        await api.post("/auth/logout", {});
+                      } catch {}
                       logout();
                       setShowAccount(false);
                     }}

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { useAuthStore } from "@/store/auth";
 
 type OrderListItem = {
   id: string;
@@ -26,17 +25,12 @@ function formatMoney(amount: number, currency = "NGN") {
 }
 
 export default function MyOrdersPage() {
-  const token = useAuthStore((s) => s.token);
   const router = useRouter();
   const [items, setItems] = useState<OrderListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!token) {
-      router.replace("/login?next=/my-orders");
-      return;
-    }
     let active = true;
     async function load() {
       try {
@@ -45,7 +39,13 @@ export default function MyOrdersPage() {
         if (!active) return;
         setItems(Array.isArray(res?.items) ? res.items : []);
       } catch (err) {
-        if (active) setError((err as Error).message || "Failed to load orders");
+        if (!active) return;
+        const message = (err as Error).message || "Failed to load orders";
+        if (message.toLowerCase().includes("401")) {
+          router.replace("/login?next=/my-orders");
+          return;
+        }
+        setError(message);
       } finally {
         if (active) setLoading(false);
       }
@@ -54,7 +54,7 @@ export default function MyOrdersPage() {
     return () => {
       active = false;
     };
-  }, [token, router]);
+  }, [router]);
 
   return (
     <div className="space-y-6">
@@ -97,4 +97,3 @@ export default function MyOrdersPage() {
     </div>
   );
 }
-

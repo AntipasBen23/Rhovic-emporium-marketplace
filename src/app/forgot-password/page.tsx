@@ -2,16 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 
 type ForgotPasswordResponse = {
   ok: boolean;
-  reset_token?: string;
 };
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,12 +20,8 @@ export default function ForgotPasswordPage() {
     setMessage("");
     setLoading(true);
     try {
-      const res = await api.post<ForgotPasswordResponse>("/auth/forgot-password", { email });
-      if (res?.reset_token) {
-        router.push(`/reset-password?token=${encodeURIComponent(res.reset_token)}`);
-        return;
-      }
-      setMessage("If the account exists, a reset link has been prepared.");
+      await api.post<ForgotPasswordResponse>("/auth/forgot-password", { email });
+      setMessage("If the account exists, a reset token has been sent to the registered channel.");
     } catch (err: unknown) {
       setError((err as { message?: string })?.message || "Request failed.");
     } finally {
@@ -65,6 +58,13 @@ export default function ForgotPasswordPage() {
         <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-sm font-extrabold disabled:opacity-50">
           {loading ? "Preparing reset..." : "Continue"}
         </button>
+
+        <div className="text-center text-xs text-gray-600 dark:text-gray-400">
+          Already have your reset token?{" "}
+          <Link href="/reset-password" className="font-extrabold text-primary hover:underline">
+            Reset password
+          </Link>
+        </div>
 
         <div className="text-center text-xs text-gray-600 dark:text-gray-400">
           Remembered your password?{" "}

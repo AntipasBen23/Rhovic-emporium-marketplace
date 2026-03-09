@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { useAuthStore } from "@/store/auth";
 
 type OrderItem = {
   product_id: string;
@@ -50,7 +49,6 @@ function formatMoney(amount: number, currency = "NGN") {
 }
 
 export default function OrderDetailsPage() {
-  const token = useAuthStore((s) => s.token);
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const orderID = params?.id;
@@ -70,20 +68,21 @@ export default function OrderDetailsPage() {
       const data = await api.get<OrderDetails>(`/orders/${orderID}`);
       setOrder(data);
     } catch (err) {
-      setError((err as Error).message || "Failed to load order");
+      const message = (err as Error).message || "Failed to load order";
+      if (message.toLowerCase().includes("401")) {
+        router.replace(`/login?next=/orders/${orderID}`);
+        return;
+      }
+      setError(message);
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    if (!token) {
-      router.replace(`/login?next=/orders/${orderID || ""}`);
-      return;
-    }
     loadOrder();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, orderID]);
+  }, [orderID]);
 
   async function onUpload(e: FormEvent) {
     e.preventDefault();
@@ -190,7 +189,7 @@ export default function OrderDetailsPage() {
                 <div className="text-xs text-gray-600 dark:text-gray-400">No proof uploaded yet.</div>
               ) : (
                 order.payment_proofs.map((proof) => (
-                  <a key={proof.id} href={`${process.env.NEXT_PUBLIC_API_URL || "https://rhovic-emporium-backend-production.up.railway.app"}${proof.file_url}`} target="_blank" rel="noreferrer" className="block rounded-xl border border-black/10 px-3 py-2 text-xs transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5">
+                  <a key={proof.id} href={`${process.env.NEXT_PUBLIC_API_URL || "https://rhovic-emporium-backend-production.up.railway.app"}/orders/${order.id}/payment-proofs/${proof.id}`} target="_blank" rel="noreferrer" className="block rounded-xl border border-black/10 px-3 py-2 text-xs transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5">
                     <div className="font-bold text-gray-900 dark:text-white">{proof.review_status}</div>
                     <div className="mt-1 text-gray-600 dark:text-gray-400">{proof.file_type}</div>
                   </a>
@@ -203,4 +202,3 @@ export default function OrderDetailsPage() {
     </div>
   );
 }
-

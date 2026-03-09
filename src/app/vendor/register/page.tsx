@@ -47,7 +47,7 @@ function Field({
 
 export default function VendorRegisterPage() {
   const router = useRouter();
-  const token = useAuthStore((s) => s.token);
+  const role = useAuthStore((s) => s.role);
 
   const [application, setApplication] = useState<VendorApplication | null>(null);
   const [loadingState, setLoadingState] = useState(true);
@@ -75,11 +75,6 @@ export default function VendorRegisterPage() {
   const [toastOk, setToastOk] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      router.replace("/signup?next=/vendor/register");
-      return;
-    }
-
     async function loadApplication() {
       try {
         setLoadingState(true);
@@ -89,13 +84,18 @@ export default function VendorRegisterPage() {
           return;
         }
         setApplication(data);
+      } catch (err: any) {
+        if (String(err?.message || "").toLowerCase().includes("401")) {
+          router.replace("/signup?next=/vendor/register");
+          return;
+        }
       } finally {
         setLoadingState(false);
       }
     }
 
     loadApplication();
-  }, [token, router]);
+  }, [role, router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -149,6 +149,10 @@ export default function VendorRegisterPage() {
       setToast("Application submitted successfully. Awaiting admin approval...");
       setTimeout(() => router.push("/vendor"), 1800);
     } catch (err: any) {
+      if (String(err?.message || "").toLowerCase().includes("401")) {
+        router.replace("/signup?next=/vendor/register");
+        return;
+      }
       setToastOk(false);
       setToast(err.message || "Application failed. Please try again.");
     } finally {
