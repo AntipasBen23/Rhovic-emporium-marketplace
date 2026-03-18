@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { useAuthStore } from "@/store/auth";
 
 type VendorApplication = {
   has_application: boolean;
@@ -14,7 +13,6 @@ type VendorApplication = {
 
 export default function VendorEntryPage() {
   const router = useRouter();
-  const role = useAuthStore((s) => s.role);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [application, setApplication] = useState<VendorApplication | null>(null);
@@ -32,8 +30,7 @@ export default function VendorEntryPage() {
       } catch (err: any) {
         const message = err.message || "Failed to load vendor status.";
         if (String(message).toLowerCase().includes("401")) {
-          const next = encodeURIComponent("/vendor/register");
-          router.replace(role ? `/login?next=${next}` : `/signup?next=${next}`);
+          router.replace("/login?next=%2Fvendor%2Fregister");
           return;
         }
         setError(message);
@@ -43,7 +40,7 @@ export default function VendorEntryPage() {
     }
 
     loadApplication();
-  }, [role, router]);
+  }, [router]);
 
   if (loading) {
     return <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">Checking vendor status...</div>;

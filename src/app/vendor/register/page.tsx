@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { useAuthStore } from "@/store/auth";
 
 const GREEN = "rgb(18,77,52)";
 
@@ -47,7 +46,6 @@ function Field({
 
 export default function VendorRegisterPage() {
   const router = useRouter();
-  const role = useAuthStore((s) => s.role);
 
   const [application, setApplication] = useState<VendorApplication | null>(null);
   const [loadingState, setLoadingState] = useState(true);
@@ -87,7 +85,7 @@ export default function VendorRegisterPage() {
       } catch (err: any) {
         if (String(err?.message || "").toLowerCase().includes("401")) {
           const next = encodeURIComponent("/vendor/register");
-          router.replace(role ? `/login?next=${next}` : `/signup?next=${next}`);
+          router.replace(`/login?next=${next}`);
           return;
         }
       } finally {
@@ -96,7 +94,7 @@ export default function VendorRegisterPage() {
     }
 
     loadApplication();
-  }, [role, router]);
+  }, [router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -152,7 +150,7 @@ export default function VendorRegisterPage() {
     } catch (err: any) {
       if (String(err?.message || "").toLowerCase().includes("401")) {
         const next = encodeURIComponent("/vendor/register");
-        router.replace(role ? `/login?next=${next}` : `/signup?next=${next}`);
+        router.replace(`/login?next=${next}`);
         return;
       }
       setToastOk(false);
