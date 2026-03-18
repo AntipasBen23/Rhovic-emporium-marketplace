@@ -86,7 +86,8 @@ export default function VendorRegisterPage() {
         setApplication(data);
       } catch (err: any) {
         if (String(err?.message || "").toLowerCase().includes("401")) {
-          router.replace("/signup?next=/vendor/register");
+          const next = encodeURIComponent("/vendor/register");
+          router.replace(role ? `/login?next=${next}` : `/signup?next=${next}`);
           return;
         }
       } finally {
@@ -150,7 +151,8 @@ export default function VendorRegisterPage() {
       setTimeout(() => router.push("/vendor"), 1800);
     } catch (err: any) {
       if (String(err?.message || "").toLowerCase().includes("401")) {
-        router.replace("/signup?next=/vendor/register");
+        const next = encodeURIComponent("/vendor/register");
+        router.replace(role ? `/login?next=${next}` : `/signup?next=${next}`);
         return;
       }
       setToastOk(false);

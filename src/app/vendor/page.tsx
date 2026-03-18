@@ -32,7 +32,8 @@ export default function VendorEntryPage() {
       } catch (err: any) {
         const message = err.message || "Failed to load vendor status.";
         if (String(message).toLowerCase().includes("401")) {
-          router.replace("/signup?next=/vendor/register");
+          const next = encodeURIComponent("/vendor/register");
+          router.replace(role ? `/login?next=${next}` : `/signup?next=${next}`);
           return;
         }
         setError(message);
