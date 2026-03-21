@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { cartCount, cartTotal, mergeCartItems, normalizeCartQty } from "@/lib/cart";
 
 export type CartItem = {
   id: string;
@@ -19,47 +20,27 @@ type CartState = {
   count: () => number;
 };
 
-function round2(n: number) {
-  return Math.round(n * 100) / 100;
-}
-
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
 
   addItem: (item) =>
-    set((state) => {
-      const existing = state.items.find((i) => i.id === item.id);
-      if (existing) {
-        return {
-          items: state.items.map((i) =>
-            i.id === item.id
-              ? { ...i, quantity: round2(i.quantity + item.quantity) }
-              : i
-          ),
-        };
-      }
-      return { items: [...state.items, { ...item, quantity: round2(item.quantity) }] };
-    }),
+    set((state) => ({ items: mergeCartItems(state.items, item) })),
 
   removeItem: (id) =>
     set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
 
   setQty: (id, qty) =>
-    set((state) => {
-      const q = round2(qty);
-      if (q <= 0) return { items: state.items.filter((i) => i.id !== id) };
-      return { items: state.items.map((i) => (i.id === id ? { ...i, quantity: q } : i)) };
-    }),
+    set((state) => ({ items: normalizeCartQty(state.items, id, qty) })),
 
   clear: () => set({ items: [] }),
 
   total: () => {
     const { items } = get();
-    return round2(items.reduce((acc, i) => acc + i.price * i.quantity, 0));
+    return cartTotal(items);
     },
 
   count: () => {
     const { items } = get();
-    return round2(items.reduce((acc, i) => acc + i.quantity, 0));
+    return cartCount(items);
   },
 }));
