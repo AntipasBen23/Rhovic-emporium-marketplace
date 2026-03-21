@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeProduct } from "./catalog";
+import { normalizeProduct } from "../src/lib/catalog";
 
 describe("normalizeProduct", () => {
   it("keeps gallery images in order and promotes the first image to cover", () => {
