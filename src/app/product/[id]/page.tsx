@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useCartStore } from "@/store/cart";
 import { api } from "@/lib/api";
@@ -35,6 +35,8 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState<string>("1");
   const [toast, setToast] = useState<string>("");
+  const [selectedImage, setSelectedImage] = useState<string>("");
+  const thumbsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -52,6 +54,7 @@ export default function ProductPage() {
         ]);
         const p = normalizeProduct(productRaw);
         setProduct(p);
+        setSelectedImage((p.imageUrls && p.imageUrls[0]) || p.imageUrl || "");
         const categories: Category[] = normalizeCategories(categoriesData?.items || []);
         const map: Record<string, string> = {};
         for (const c of categories) map[c.id] = c.name;
@@ -75,6 +78,15 @@ export default function ProductPage() {
     return Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100);
   }, [product]);
 
+  const gallery = useMemo(() => {
+    if (!product) return [];
+    return product.imageUrls && product.imageUrls.length > 0
+      ? product.imageUrls
+      : product.imageUrl
+        ? [product.imageUrl]
+        : [];
+  }, [product]);
+
   function addCurrentToCart() {
     if (!product) return;
     const cleaned = clampQty(qty);
@@ -93,6 +105,14 @@ export default function ProductPage() {
     });
     setToast("Added to cart.");
     setTimeout(() => setToast(""), 1400);
+  }
+
+  function scrollThumbs(direction: "left" | "right") {
+    if (!thumbsRef.current) return;
+    thumbsRef.current.scrollBy({
+      left: direction === "left" ? -220 : 220,
+      behavior: "smooth",
+    });
   }
 
   if (loading) {
@@ -130,11 +150,55 @@ export default function ProductPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1.4fr_0.9fr]">
         <section className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
-          {product.imageUrl ? (
-            <img src={product.imageUrl} alt={product.name} className="h-[380px] w-full rounded-xl object-cover border border-black/10 dark:border-white/10" />
+          {selectedImage ? (
+            <img src={selectedImage} alt={product.name} className="h-[380px] w-full rounded-xl object-cover border border-black/10 dark:border-white/10" />
           ) : (
             <div className="h-[380px] w-full rounded-xl border border-dashed border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5" />
           )}
+          {gallery.length > 0 ? (
+            <div className="mt-4 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => scrollThumbs("left")}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-xl font-black text-gray-700 transition hover:bg-black/5 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                aria-label="Scroll product images left"
+              >
+                ‹
+              </button>
+              <div ref={thumbsRef} className="flex flex-1 gap-3 overflow-x-auto pb-2">
+                {gallery.map((image, index) => {
+                  const isSelected = image === selectedImage;
+                  return (
+                    <button
+                      key={`${image}-${index}`}
+                      type="button"
+                      onClick={() => setSelectedImage(image)}
+                      className={[
+                        "relative h-20 min-w-[84px] overflow-hidden rounded-2xl border-2 transition",
+                        isSelected
+                          ? "border-accent ring-2 ring-accent/30"
+                          : "border-black/10 hover:border-primary dark:border-white/10",
+                      ].join(" ")}
+                      aria-pressed={isSelected}
+                    >
+                      <img src={image} alt={`${product.name} view ${index + 1}`} className="h-full w-full object-cover" />
+                      <span className={`absolute bottom-1 left-1 rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${isSelected ? "bg-accent text-black" : "bg-black/65 text-white"}`}>
+                        {isSelected ? "Selected" : `Photo ${index + 1}`}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                type="button"
+                onClick={() => scrollThumbs("right")}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-xl font-black text-gray-700 transition hover:bg-black/5 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                aria-label="Scroll product images right"
+              >
+                ›
+              </button>
+            </div>
+          ) : null}
         </section>
 
         <section className="rounded-2xl border border-black/10 bg-white p-6 space-y-4 dark:border-white/10 dark:bg-white/5">

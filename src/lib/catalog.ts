@@ -8,6 +8,7 @@ export type CatalogProduct = {
   stockQuantity?: number | string;
   categoryId?: string | null;
   imageUrl?: string | null;
+  imageUrls?: string[];
   status?: string;
 };
 
@@ -33,10 +34,22 @@ function readNumber(obj: Record<string, unknown>, ...keys: string[]): number {
   return 0;
 }
 
+function readStringArray(obj: Record<string, unknown>, ...keys: string[]): string[] {
+  for (const k of keys) {
+    const v = obj[k];
+    if (Array.isArray(v)) {
+      return v.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+    }
+  }
+  return [];
+}
+
 export function normalizeProduct(raw: unknown): CatalogProduct {
   const obj = (raw || {}) as Record<string, unknown>;
   const categoryId = readString(obj, "category_id", "CategoryID");
   const imageUrl = readString(obj, "image_url", "ImageURL");
+  const imageUrls = readStringArray(obj, "image_urls", "ImageURLs");
+  const normalizedImageUrls = imageUrls.length > 0 ? imageUrls : imageUrl ? [imageUrl] : [];
 
   return {
     id: readString(obj, "id", "ID"),
@@ -50,7 +63,8 @@ export function normalizeProduct(raw: unknown): CatalogProduct {
     pricingUnit: readString(obj, "pricing_unit", "PricingUnit"),
     stockQuantity: readString(obj, "stock_quantity", "StockQuantity") || readNumber(obj, "stock_quantity", "StockQuantity"),
     categoryId: categoryId || null,
-    imageUrl: imageUrl || null,
+    imageUrl: normalizedImageUrls[0] || imageUrl || null,
+    imageUrls: normalizedImageUrls,
     status: readString(obj, "status", "Status"),
   };
 }

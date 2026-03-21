@@ -19,6 +19,7 @@ type Product = {
   status: string;
   stock_quantity: number | string;
   image_url?: string | null;
+  image_urls?: string[] | null;
   description?: string;
 };
 
@@ -70,7 +71,7 @@ export default function VendorDashboardPage() {
   const [stock, setStock] = useState("");
   const [status, setStatus] = useState("published");
   const [desc, setDesc] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     if (token || role === "vendor") fetchData();
@@ -120,7 +121,7 @@ export default function VendorDashboardPage() {
     setStock("");
     setStatus("published");
     setDesc("");
-    setImageUrl("");
+    setImageUrls([]);
     setEditingId(null);
     setSubmitError("");
   }
@@ -140,7 +141,7 @@ export default function VendorDashboardPage() {
     setStock(String(p.stock_quantity ?? ""));
     setStatus(p.status || "published");
     setDesc(p.description || "");
-    setImageUrl(p.image_url || "");
+    setImageUrls(Array.isArray(p.image_urls) && p.image_urls.length > 0 ? p.image_urls.filter(Boolean) : p.image_url ? [p.image_url] : []);
     setSubmitError("");
     setShowModal(true);
   }
@@ -152,17 +153,23 @@ export default function VendorDashboardPage() {
         cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "rhovic-marketplace",
         uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default",
         sources: ["local", "url", "camera"],
-        multiple: false,
+        multiple: true,
         cropping: true,
       },
       (error: unknown, result: { event?: string; info?: { secure_url?: string } }) => {
         if (!error && result?.event === "success" && result.info?.secure_url) {
-          setImageUrl(result.info.secure_url);
+          setImageUrls((current) => (current.includes(result.info!.secure_url!) ? current : [...current, result.info!.secure_url!]));
+        }
+        if (!error && result?.event === "queues-end") {
           widget.close();
         }
       }
     );
     widget.open();
+  }
+
+  function removeImage(target: string) {
+    setImageUrls((current) => current.filter((img) => img !== target));
   }
 
   async function submitProduct(e: React.FormEvent) {
@@ -179,7 +186,8 @@ export default function VendorDashboardPage() {
         stock_quantity: stock,
         status,
         description: desc,
-        image_url: imageUrl || null,
+        image_url: imageUrls[0] || null,
+        image_urls: imageUrls,
       };
 
       if (editingId) {
@@ -294,8 +302,8 @@ export default function VendorDashboardPage() {
                 return (
                   <div key={p.id} className="p-5">
                     <div className="flex gap-4 items-start">
-                      {p.image_url ? (
-                        <img src={p.image_url} alt={p.name} className="w-16 h-16 rounded-xl object-cover border border-black/5" />
+                      {(p.image_urls?.[0] || p.image_url) ? (
+                        <img src={p.image_urls?.[0] || p.image_url || ""} alt={p.name} className="w-16 h-16 rounded-xl object-cover border border-black/5" />
                       ) : (
                         <div className="w-16 h-16 rounded-xl bg-black/5 flex items-center justify-center text-[10px] text-gray-400 font-extrabold uppercase">No Image</div>
                       )}
@@ -454,21 +462,28 @@ export default function VendorDashboardPage() {
                 <textarea value={desc} onChange={(e) => setDesc(e.target.value)} className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:border-primary outline-none min-h-[90px] dark:bg-black/20 dark:border-white/10 dark:text-white" />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 block">Product Image</label>
-                {imageUrl ? (
-                  <div className="relative group">
-                    <img src={imageUrl} alt="product preview" className="w-full h-36 object-cover rounded-2xl border" />
-                    <button type="button" onClick={() => setImageUrl("")} className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition">
-                      ×
-                    </button>
+              <div className="space-y-3">
+                <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 block">Product Images</label>
+                <button type="button" onClick={handleUpload} className="w-full border-2 border-dashed border-black/10 rounded-2xl py-8 flex flex-col items-center justify-center hover:bg-black/5 transition group dark:border-white/10 dark:hover:bg-white/5">
+                  <div className="text-sm font-extrabold uppercase tracking-wide text-gray-700 transition group-hover:scale-105 dark:text-gray-200">Upload Photos</div>
+                  <div className="text-xs font-extrabold mt-1 text-gray-500 dark:text-gray-400">ADD ONE OR MORE PHOTOS</div>
+                </button>
+                {imageUrls.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {imageUrls.map((img, index) => (
+                      <div key={`${img}-${index}`} className="relative overflow-hidden rounded-2xl border border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5">
+                        <img src={img} alt={`product preview ${index + 1}`} className="h-28 w-full object-cover" />
+                        <div className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-1 text-[10px] font-black uppercase text-gray-900">
+                          {index === 0 ? "Selected Cover" : `Photo ${index + 1}`}
+                        </div>
+                        <button type="button" onClick={() => removeImage(img)} className="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-[10px] font-black uppercase text-white">
+                          Remove
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ) : (
-                  <button type="button" onClick={handleUpload} className="w-full border-2 border-dashed border-black/10 rounded-2xl py-8 flex flex-col items-center justify-center hover:bg-black/5 transition group dark:border-white/10 dark:hover:bg-white/5">
-                    <div className="text-2xl group-hover:scale-110 transition">📷</div>
-                    <div className="text-xs font-extrabold mt-1 text-gray-500 dark:text-gray-400">UPLOAD TO CLOUDINARY</div>
-                  </button>
-                )}
+                ) : null}
+                <p className="text-xs text-gray-500 dark:text-gray-400">The first photo becomes the main cover across the storefront.</p>
               </div>
 
               <div className="pt-4 flex gap-3">
