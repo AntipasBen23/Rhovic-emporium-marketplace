@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { resolveVendorEntryDestination, shouldRedirectToLogin, vendorLoginRedirect } from "@/lib/vendor-access";
 
 const GREEN = "rgb(18,77,52)";
 
@@ -77,15 +78,15 @@ export default function VendorRegisterPage() {
       try {
         setLoadingState(true);
         const data = await api.get<VendorApplication>("/vendor/application");
-        if (data?.has_application && data.status === "approved") {
-          router.replace("/vendor/dashboard");
+        const destination = resolveVendorEntryDestination(data);
+        if (destination) {
+          router.replace(destination);
           return;
         }
         setApplication(data);
       } catch (err: any) {
-        if (String(err?.message || "").toLowerCase().includes("401")) {
-          const next = encodeURIComponent("/vendor/register");
-          router.replace(`/login?next=${next}`);
+        if (shouldRedirectToLogin(String(err?.message || ""))) {
+          router.replace(vendorLoginRedirect());
           return;
         }
       } finally {
@@ -148,9 +149,8 @@ export default function VendorRegisterPage() {
       setToast("Application submitted successfully. Awaiting admin approval...");
       setTimeout(() => router.push("/vendor"), 1800);
     } catch (err: any) {
-      if (String(err?.message || "").toLowerCase().includes("401")) {
-        const next = encodeURIComponent("/vendor/register");
-        router.replace(`/login?next=${next}`);
+      if (shouldRedirectToLogin(String(err?.message || ""))) {
+        router.replace(vendorLoginRedirect());
         return;
       }
       setToastOk(false);

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { resolveVendorEntryDestination, shouldRedirectToLogin, vendorLoginRedirect } from "@/lib/vendor-access";
 
 type VendorApplication = {
   has_application: boolean;
@@ -22,15 +23,16 @@ export default function VendorEntryPage() {
       try {
         setLoading(true);
         const data = await api.get<VendorApplication>("/vendor/application");
-        if (data?.has_application && data.status === "approved") {
-          router.replace("/vendor/dashboard");
+        const destination = resolveVendorEntryDestination(data);
+        if (destination) {
+          router.replace(destination);
           return;
         }
         setApplication(data);
       } catch (err: any) {
         const message = err.message || "Failed to load vendor status.";
-        if (String(message).toLowerCase().includes("401")) {
-          router.replace("/login?next=%2Fvendor%2Fregister");
+        if (shouldRedirectToLogin(String(message))) {
+          router.replace(vendorLoginRedirect());
           return;
         }
         setError(message);
