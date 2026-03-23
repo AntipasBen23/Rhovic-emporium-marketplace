@@ -154,7 +154,12 @@ export default function VendorDashboardPage() {
         uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default",
         sources: ["local", "url", "camera"],
         multiple: true,
-        cropping: true,
+        maxFiles: 12,
+        resourceType: "image",
+        clientAllowedFormats: ["jpg", "jpeg", "png", "webp"],
+        cropping: false,
+        showCompletedButton: true,
+        singleUploadAutoClose: false,
       },
       (error: unknown, result: { event?: string; info?: { secure_url?: string } }) => {
         if (!error && result?.event === "success" && result.info?.secure_url) {
