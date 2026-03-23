@@ -13,21 +13,25 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setTheme] = useState<Theme>("light");
-    const [mounted, setMounted] = useState(false);
+
+    const applyTheme = (nextTheme: Theme) => {
+        document.documentElement.classList.toggle("dark", nextTheme === "dark");
+        document.documentElement.dataset.theme = nextTheme;
+        document.documentElement.style.colorScheme = nextTheme;
+    };
 
     useEffect(() => {
         const savedTheme = localStorage.getItem("rhovic-theme") as Theme | null;
         const initialTheme = savedTheme || "light";
         setTheme(initialTheme);
-        document.documentElement.classList.toggle("dark", initialTheme === "dark");
-        setMounted(true);
+        applyTheme(initialTheme);
     }, []);
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
         setTheme(newTheme);
         localStorage.setItem("rhovic-theme", newTheme);
-        document.documentElement.classList.toggle("dark", newTheme === "dark");
+        applyTheme(newTheme);
     };
 
     return (

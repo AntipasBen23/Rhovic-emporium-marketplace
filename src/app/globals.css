@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap');
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================
    TAILWIND v4 THEME — registers brand utilities like bg-primary
@@ -26,7 +27,8 @@
   --text-muted: 45 55 72;
   /* gray-700 — readable muted   */
   --border: 226 232 240;
-  /* slate-200 — visible borders */
+  color-scheme: light;
+  /* slate-200 - visible borders */
 }
 
 .dark {
@@ -48,6 +50,7 @@ html,
 body {
   height: 100%;
   scroll-behavior: smooth;
+  background-color: rgb(var(--bg));
 }
 
 body {
@@ -57,6 +60,7 @@ body {
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1,
@@ -216,3 +220,4 @@ input:-webkit-autofill:focus {
 .btn-accent:active {
   transform: translateY(0);
 }
+
