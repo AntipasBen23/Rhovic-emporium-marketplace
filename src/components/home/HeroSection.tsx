@@ -129,7 +129,7 @@ export default function HeroSection() {
                   </span>
                 </div>
                 <div className="text-sm font-bold leading-snug">
-                  Bestselling fabrics, accessories, and electronics — direct from verified source.
+                  Bestselling fabrics, accessories, and electronics, direct from verified source.
                 </div>
               </div>
             </div>
