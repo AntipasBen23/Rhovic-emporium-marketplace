@@ -6,28 +6,33 @@ import { api } from "@/lib/api";
 import { normalizeCategories, type Category } from "@/lib/catalog";
 
 type CategoryPillsProps = {
-  categories?: string[];
+  activeCategoryId: string;
+  onSelectCategory: (categoryId: string, categoryName: string) => void;
+};
+
+type CategoryOption = {
+  id: string;
+  name: string;
 };
 
 export default function CategoryPills({
-  categories = ["All"],
+  activeCategoryId,
+  onSelectCategory,
 }: CategoryPillsProps) {
-  const [active, setActive] = useState(categories[0] ?? "All");
-  const [items, setItems] = useState<string[]>(categories);
+  const [items, setItems] = useState<CategoryOption[]>([{ id: "all", name: "All" }]);
 
   useEffect(() => {
     async function load() {
       try {
         const res = await api.get<{ items: unknown[] }>("/categories");
         const cats: Category[] = normalizeCategories(res?.items || []);
-        const names = cats.map((c) => c.name);
-        setItems(["All", ...names]);
+        setItems([{ id: "all", name: "All" }, ...cats.map((c) => ({ id: c.id, name: c.name }))]);
       } catch {
-        setItems(categories);
+        setItems([{ id: "all", name: "All" }]);
       }
     }
-    load();
-  }, [categories]);
+    void load();
+  }, []);
 
   return (
     <section className="space-y-6 animate-fade-up delay-300">
@@ -44,13 +49,13 @@ export default function CategoryPills({
       </div>
 
       <div className="flex flex-wrap gap-2.5">
-        {items.map((c, i) => {
-          const isActive = c === active;
+        {items.map((item, i) => {
+          const isActive = item.id === activeCategoryId;
           return (
             <button
-              key={c}
+              key={item.id}
               type="button"
-              onClick={() => setActive(c)}
+              onClick={() => onSelectCategory(item.id, item.name)}
               className={[
                 "rounded-xl px-5 py-2.5 text-sm font-black transition-all duration-300",
                 "border hover-lift shadow-sm",
@@ -61,13 +66,12 @@ export default function CategoryPills({
               style={{ animationDelay: `${i * 50}ms` }}
               aria-pressed={isActive}
             >
-              {c}
+              {item.name}
             </button>
           );
         })}
       </div>
 
-      {/* Small helper row */}
       <div className="flex flex-wrap items-center gap-4 text-xs font-black text-gray-600 dark:text-gray-400 uppercase tracking-widest">
         <span className="inline-flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />

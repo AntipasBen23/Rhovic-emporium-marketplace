@@ -8,9 +8,15 @@ import { useCartStore } from "@/store/cart";
 
 type ProductGridProps = {
   title?: string;
+  activeCategoryId?: string;
+  activeCategoryName?: string;
 };
 
-export default function ProductGrid({ title = "Curated Products" }: ProductGridProps) {
+export default function ProductGrid({
+  title = "Curated Products",
+  activeCategoryId = "all",
+  activeCategoryName = "All",
+}: ProductGridProps) {
   const addItem = useCartStore((s) => s.addItem);
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [catMap, setCatMap] = useState<Record<string, string>>({});
@@ -44,6 +50,11 @@ export default function ProductGrid({ title = "Curated Products" }: ProductGridP
       setLoading(false);
     }
   }
+
+  const filteredProducts =
+    activeCategoryId === "all"
+      ? products
+      : products.filter((product) => product.categoryId === activeCategoryId);
 
   return (
     <section className="space-y-12 animate-fade-up delay-300">
@@ -82,9 +93,23 @@ export default function ProductGrid({ title = "Curated Products" }: ProductGridP
             <p className="text-sm font-medium text-gray-500">Vendors have not published items yet.</p>
           </div>
         </div>
+      ) : filteredProducts.length === 0 ? (
+        <div className="flex min-h-[22rem] items-center justify-center rounded-[3rem] border border-black/5 dark:border-white/5 bg-gradient-to-br from-black/[0.02] to-black/[0.04] dark:from-white/[0.02] dark:to-white/[0.04] px-8">
+          <div className="max-w-xl text-center space-y-4">
+            <div className="inline-flex items-center justify-center rounded-full bg-white/80 px-4 py-1 text-xs font-black uppercase tracking-[0.22em] text-primary shadow-sm dark:bg-white/10 dark:text-accent">
+              Category not stocked yet
+            </div>
+            <h3 className="text-2xl font-black font-heading text-gray-950 dark:text-white">
+              No live products in {activeCategoryName} yet.
+            </h3>
+            <p className="text-sm font-medium leading-6 text-gray-600 dark:text-gray-400">
+              This category is ready on the marketplace, but no vendor has published items under it yet. Try another category or check back soon.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:gap-10">
-          {products.map((p, i) => (
+          {filteredProducts.map((p, i) => (
             <div
               key={p.id}
               className="group relative flex flex-col rounded-[2.5rem] pb-20 hover-lift"

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import HeroSection from "@/components/home/HeroSection";
 import CategoryPills from "@/components/home/CategoryPills";
 import DealsStrip from "@/components/home/DealsStrip";
@@ -9,12 +12,24 @@ import NewsletterStrip from "@/components/home/NewsletterStrip";
 import FooterLinks from "@/components/home/FooterLinks";
 
 export default function HomePage() {
+  const [activeCategoryId, setActiveCategoryId] = useState("all");
+  const [activeCategoryName, setActiveCategoryName] = useState("All");
+
   return (
     <div className="space-y-24 pb-20">
       <HeroSection />
-      <CategoryPills />
+      <CategoryPills
+        activeCategoryId={activeCategoryId}
+        onSelectCategory={(categoryId, categoryName) => {
+          setActiveCategoryId(categoryId);
+          setActiveCategoryName(categoryName);
+        }}
+      />
       <DealsStrip />
-      <ProductGrid />
+      <ProductGrid
+        activeCategoryId={activeCategoryId}
+        activeCategoryName={activeCategoryName}
+      />
       <TrustBar />
       <HowItWorks />
       <VendorCTA />
