@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Lato, Outfit } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 
@@ -17,12 +17,6 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-const lato = Lato({
-  subsets: ["latin"],
-  variable: "--font-lato",
-  weight: ["600"],
-});
-
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
@@ -37,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${lato.variable} ${outfit.variable} antialiased selection:bg-yellow-200/50`}
+        className={`${inter.variable} ${outfit.variable} antialiased selection:bg-yellow-200/50`}
       >
         <ThemeProvider>
           <div className="min-h-screen bg-white text-gray-950 dark:bg-[rgb(8,15,12)] dark:text-gray-50 transition-colors duration-300">

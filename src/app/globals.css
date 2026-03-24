@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -96,7 +97,7 @@ button,
 .btn-accent,
 a.btn-primary,
 a.btn-accent {
-  font-family: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Lato', ui-sans-serif, system-ui, sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 18px;
