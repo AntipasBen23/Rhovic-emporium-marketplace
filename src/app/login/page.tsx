@@ -5,11 +5,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import TurnstileWidget from "@/components/auth/TurnstileWidget";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function LoginPage() {
     try {
       const res = await api.post<{ access_token: string; refresh_token: string }>(
         "/auth/login",
-        { email, password }
+        { email, password, captcha_token: captchaToken }
       );
 
       const payload = JSON.parse(atob(res.access_token.split(".")[1]));
@@ -103,6 +105,8 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
+
+        <TurnstileWidget onToken={setCaptchaToken} />
 
         <button
           type="submit"

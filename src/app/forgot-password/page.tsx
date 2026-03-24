@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api";
+import TurnstileWidget from "@/components/auth/TurnstileWidget";
 
 type ForgotPasswordResponse = {
   ok: boolean;
@@ -13,6 +14,7 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -20,7 +22,7 @@ export default function ForgotPasswordPage() {
     setMessage("");
     setLoading(true);
     try {
-      await api.post<ForgotPasswordResponse>("/auth/forgot-password", { email });
+      await api.post<ForgotPasswordResponse>("/auth/forgot-password", { email, captcha_token: captchaToken });
       setMessage("If the account exists, a reset token has been sent to the registered channel.");
     } catch (err: unknown) {
       setError((err as { message?: string })?.message || "Request failed.");
@@ -54,6 +56,8 @@ export default function ForgotPasswordPage() {
             className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black/20 focus:shadow-[0_0_0_3px_rgba(18,77,52,0.12)] dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500"
           />
         </div>
+
+        <TurnstileWidget onToken={setCaptchaToken} />
 
         <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-sm font-extrabold disabled:opacity-50">
           {loading ? "Preparing reset..." : "Continue"}

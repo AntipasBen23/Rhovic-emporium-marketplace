@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import TurnstileWidget from "@/components/auth/TurnstileWidget";
 
 function checkPasswordRules(value: string) {
   return {
@@ -31,6 +32,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -52,7 +54,7 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await api.post("/auth/register", { email, password, role: "buyer" });
+      await api.post("/auth/register", { email, password, role: "buyer", captcha_token: captchaToken });
       const next = new URLSearchParams(window.location.search).get("next") || "/";
       router.push(`/login?next=${encodeURIComponent(next)}`);
     } catch (err: unknown) {
@@ -134,6 +136,8 @@ export default function SignupPage() {
             </button>
           </div>
         </div>
+
+        <TurnstileWidget onToken={setCaptchaToken} />
 
         <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-sm font-extrabold disabled:opacity-50">
           {loading ? "Creating account..." : "Sign Up"}
