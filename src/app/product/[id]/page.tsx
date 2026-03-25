@@ -250,6 +250,15 @@ export default function ProductPage() {
               <li>• Category: {product.categoryId ? (catMap[product.categoryId] || "Uncategorized") : "Uncategorized"}</li>
             </ul>
           </div>
+          <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+            <div className="text-sm font-extrabold text-gray-900 dark:text-white">Need help?</div>
+            <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
+              Reach our customer care team for payment complaints, delivery issues, or product questions.
+            </p>
+            <Link href="/support" className="btn-primary mt-4 inline-flex w-full items-center justify-center">
+              Go to support chat
+            </Link>
+          </div>
         </aside>
       </div>
 
@@ -270,3 +279,4 @@ export default function ProductPage() {
     </div>
   );
 }
+
