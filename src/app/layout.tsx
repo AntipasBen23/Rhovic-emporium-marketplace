@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import VisitTracker from "@/components/analytics/VisitTracker";
+import SessionManager from "@/components/auth/SessionManager";
 
 export const metadata: Metadata = {
   title: "RHOVIC Marketplace",
@@ -36,6 +37,7 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} antialiased selection:bg-yellow-200/50`}
       >
         <ThemeProvider>
+          <SessionManager />
           <Suspense fallback={null}>
             <VisitTracker />
           </Suspense>
