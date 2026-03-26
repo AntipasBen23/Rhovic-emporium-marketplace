@@ -56,7 +56,7 @@ export default function SignupPage() {
     try {
       await api.post("/auth/register", { email, password, role: "buyer", captcha_token: captchaToken });
       const next = new URLSearchParams(window.location.search).get("next") || "/";
-      router.push(`/login?next=${encodeURIComponent(next)}`);
+      router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`);
     } catch (err: unknown) {
       setError((err as { message?: string })?.message || "Sign up failed.");
     } finally {

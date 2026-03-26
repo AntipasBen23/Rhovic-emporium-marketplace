@@ -40,7 +40,13 @@ export default function LoginPage() {
         router.push("/");
       }
     } catch (err: unknown) {
-      setError((err as { message?: string })?.message || "Invalid email or password");
+      const message = (err as { message?: string })?.message || "Invalid email or password";
+      if (message.toLowerCase().includes("email verification required")) {
+        const next = new URLSearchParams(window.location.search).get("next") || "/";
+        router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`);
+        return;
+      }
+      setError(message);
     } finally {
       setLoading(false);
     }
