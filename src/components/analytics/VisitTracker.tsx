@@ -26,18 +26,12 @@ export default function VisitTracker() {
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : "",
     });
 
-    if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function") {
-      const blob = new Blob([payload], { type: "application/json" });
-      navigator.sendBeacon(`${API_URL}/analytics/visits`, blob);
-      return;
-    }
-
     void fetch(`${API_URL}/analytics/visits`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: payload,
       keepalive: true,
-      credentials: "omit",
+      credentials: "include",
     }).catch(() => {
       // Analytics should never interrupt the storefront.
     });
