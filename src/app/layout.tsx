@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import VisitTracker from "@/components/analytics/VisitTracker";
@@ -35,7 +36,9 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} antialiased selection:bg-yellow-200/50`}
       >
         <ThemeProvider>
-          <VisitTracker />
+          <Suspense fallback={null}>
+            <VisitTracker />
+          </Suspense>
           <div className="min-h-screen bg-white text-gray-950 dark:bg-[rgb(8,15,12)] dark:text-gray-50 transition-colors duration-300">
             <Header />
             <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">{children}</main>
