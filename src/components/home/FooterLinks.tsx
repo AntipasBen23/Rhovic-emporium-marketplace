@@ -26,9 +26,9 @@ const columns: Column[] = [
     title: "Support",
     links: [
       { label: "Help center", href: "/support" },
-      { label: "Order tracking", href: "/orders" },
+      { label: "Order tracking", href: "/support#track-order" },
       { label: "Returns & refunds", href: "/support#returns" },
-      { label: "Dispute resolution", href: "/support#disputes" },
+      { label: "Dispute resolution", href: "/support#live-chat" },
     ],
   },
   {

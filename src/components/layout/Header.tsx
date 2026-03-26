@@ -15,8 +15,10 @@ export default function Header() {
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [showSearchMenu, setShowSearchMenu] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const accountRef = useRef<HTMLDivElement | null>(null);
+  const helpRef = useRef<HTMLDivElement | null>(null);
   const searchRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
@@ -97,6 +99,9 @@ export default function Header() {
       if (accountRef.current && !accountRef.current.contains(target)) {
         setShowAccount(false);
       }
+      if (helpRef.current && !helpRef.current.contains(target)) {
+        setShowHelp(false);
+      }
       if (searchRef.current && !searchRef.current.contains(target)) {
         setShowSearchMenu(false);
       }
@@ -105,6 +110,7 @@ export default function Header() {
     function onEsc(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setShowAccount(false);
+        setShowHelp(false);
         setShowSearchMenu(false);
       }
     }
@@ -236,6 +242,50 @@ export default function Header() {
                   </button>
                 </>
               )}
+            </div>
+          </div>
+
+          <div className="relative" ref={helpRef}>
+            <button
+              type="button"
+              onClick={() => setShowHelp((s) => !s)}
+              className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2.5 text-sm font-black text-gray-900 hover:bg-black/5 dark:border-white/10 dark:text-white"
+            >
+              Help
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+            <div
+              className={`absolute left-1/2 z-40 mt-2 w-64 -translate-x-1/2 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-xl transition-all duration-200 dark:border-white/10 dark:bg-black ${showHelp ? "pointer-events-auto translate-y-0 scale-100 opacity-100" : "pointer-events-none -translate-y-1 scale-95 opacity-0"}`}
+            >
+              <div className="p-2">
+                {[
+                  { label: "Help Center", href: "/support" },
+                  { label: "Place an order", href: "/support#place-order" },
+                  { label: "Payment options", href: "/support#payment-options" },
+                  { label: "Track an order", href: "/support#track-order" },
+                  { label: "Cancel an order", href: "/support#cancel-order" },
+                  { label: "Returns & Refunds", href: "/support#returns" },
+                  { label: "Cookie Preferences", href: "/support#cookie-preferences" },
+                ].map((item) => (
+                  <Link
+                    key={item.label}
+                    onClick={() => setShowHelp(false)}
+                    href={item.href}
+                    className="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 transition hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="border-t border-black/10 p-3 dark:border-white/10">
+                <Link
+                  onClick={() => setShowHelp(false)}
+                  href="/support#live-chat"
+                  className="btn-accent inline-flex w-full items-center justify-center"
+                >
+                  Live Chat
+                </Link>
+              </div>
             </div>
           </div>
 
