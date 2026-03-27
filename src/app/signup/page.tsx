@@ -58,7 +58,13 @@ export default function SignupPage() {
       const next = new URLSearchParams(window.location.search).get("next") || "/";
       router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`);
     } catch (err: unknown) {
-      setError((err as { message?: string })?.message || "Sign up failed.");
+      const message = (err as { message?: string })?.message || "Sign up failed.";
+      if (message.toLowerCase().includes("verification code right now")) {
+        const next = new URLSearchParams(window.location.search).get("next") || "/";
+        router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`);
+        return;
+      }
+      setError(message);
     } finally {
       setLoading(false);
     }

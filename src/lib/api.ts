@@ -44,6 +44,9 @@ function humanizeError(status: number, message: string, details: string) {
   if (status === 409 && message.toLowerCase().includes("account already exists")) {
     return "An account with this email already exists. Log in or verify your email to continue.";
   }
+  if (status === 503 && message.toLowerCase().includes("verification email unavailable")) {
+    return "Your account was created, but we could not send the verification code right now. Please try resending the code shortly.";
+  }
   if (message.toLowerCase().includes("email verification required")) {
     return "Please verify your email with the code we sent before logging in.";
   }
