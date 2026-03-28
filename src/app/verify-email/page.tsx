@@ -1,10 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import TurnstileWidget from "@/components/auth/TurnstileWidget";
+
+type VerificationStatusResponse = {
+  email?: string;
+  verified?: boolean;
+  otp_sent_at?: string | null;
+  expires_at?: string | null;
+};
+
+const RESEND_DELAY_SECONDS = 30;
+const SUGGESTION_DELAY_SECONDS = 25;
 
 function VerifyEmailContent() {
   const router = useRouter();
@@ -17,6 +27,50 @@ function VerifyEmailContent() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [otpSentAt, setOtpSentAt] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
+  const [secondsUntilResend, setSecondsUntilResend] = useState(0);
+  const [showResendHint, setShowResendHint] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadStatus() {
+      if (!email) return;
+      try {
+        const res = await api.get<VerificationStatusResponse>(`/auth/verification-status?email=${encodeURIComponent(email)}`);
+        if (!mounted) return;
+        setOtpSentAt(res.otp_sent_at || null);
+        setExpiresAt(res.expires_at || null);
+      } catch {
+        // Keep the verify flow usable even if status lookup fails.
+      }
+    }
+    loadStatus();
+    return () => {
+      mounted = false;
+    };
+  }, [email]);
+
+  useEffect(() => {
+    if (!otpSentAt) {
+      setSecondsUntilResend(0);
+      setShowResendHint(false);
+      return;
+    }
+
+    function updateTimers() {
+      const sentAtMs = new Date(otpSentAt).getTime();
+      const now = Date.now();
+      const resendAtMs = sentAtMs + RESEND_DELAY_SECONDS * 1000;
+      const hintAtMs = sentAtMs + SUGGESTION_DELAY_SECONDS * 1000;
+      setSecondsUntilResend(Math.max(0, Math.ceil((resendAtMs - now) / 1000)));
+      setShowResendHint(now >= hintAtMs);
+    }
+
+    updateTimers();
+    const interval = window.setInterval(updateTimers, 1000);
+    return () => window.clearInterval(interval);
+  }, [otpSentAt]);
 
   async function onVerify(e: React.FormEvent) {
     e.preventDefault();
@@ -41,7 +95,9 @@ function VerifyEmailContent() {
     setSuccess("");
     setResending(true);
     try {
-      await api.post("/auth/resend-verification", { email, captcha_token: captchaToken });
+      const res = await api.post<VerificationStatusResponse>("/auth/resend-verification", { email, captcha_token: captchaToken });
+      setOtpSentAt(res.otp_sent_at || new Date().toISOString());
+      setExpiresAt(res.expires_at || null);
       setSuccess("A new verification code has been sent. It expires in 10 minutes.");
     } catch (err: unknown) {
       setError((err as { message?: string })?.message || "Could not resend verification code.");
@@ -60,6 +116,17 @@ function VerifyEmailContent() {
         <p className="text-xs font-medium text-gray-500 dark:text-gray-500">
           Your verification code may take a few moments to arrive. If you do not see it soon, use the resend button below.
         </p>
+        {otpSentAt ? (
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-500">
+            Last code issued at {new Date(otpSentAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}.
+            {expiresAt ? ` It stays valid until ${new Date(expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.` : ""}
+          </p>
+        ) : null}
+        {showResendHint && secondsUntilResend === 0 ? (
+          <p className="text-xs font-semibold text-primary">
+            Still no code? You can request a fresh one now.
+          </p>
+        ) : null}
       </div>
 
       {error ? (
@@ -97,10 +164,10 @@ function VerifyEmailContent() {
         <button
           type="button"
           onClick={onResend}
-          disabled={resending || !email}
+          disabled={resending || !email || secondsUntilResend > 0}
           className="w-full rounded-xl border border-black/10 bg-transparent px-4 py-3 text-sm font-extrabold text-gray-900 transition hover:bg-black/5 disabled:opacity-50 dark:border-white/10 dark:text-white dark:hover:bg-white/10"
         >
-          {resending ? "Sending new code..." : "Resend code"}
+          {resending ? "Sending new code..." : secondsUntilResend > 0 ? `Resend code in ${secondsUntilResend}s` : "Resend code"}
         </button>
 
         <div className="text-center text-xs text-gray-600 dark:text-gray-400">
