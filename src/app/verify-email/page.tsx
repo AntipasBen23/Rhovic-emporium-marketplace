@@ -57,6 +57,9 @@ function VerifyEmailContent() {
         <p className="text-sm text-gray-600 dark:text-gray-400">
           We sent a 6-digit code to <span className="font-bold text-gray-900 dark:text-white">{email || "your email"}</span>. It expires in 10 minutes.
         </p>
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-500">
+          Your verification code may take a few moments to arrive. If you do not see it soon, use the resend button below.
+        </p>
       </div>
 
       {error ? (
