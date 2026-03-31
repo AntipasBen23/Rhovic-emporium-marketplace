@@ -1,6 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://rhovic-emporium-backend-production.up.railway.app";
 
 let refreshPromise: Promise<boolean> | null = null;
+let csrfBootstrapPromise: Promise<void> | null = null;
 
 function getCSRFCookie() {
   if (typeof document === "undefined") return "";
@@ -8,6 +9,22 @@ function getCSRFCookie() {
     .split("; ")
     .find((part) => part.startsWith("rhovic_csrf_token="));
   return cookie ? decodeURIComponent(cookie.slice("rhovic_csrf_token=".length)) : "";
+}
+
+async function ensureCSRFToken(): Promise<void> {
+  if (getCSRFCookie()) return;
+  if (!csrfBootstrapPromise) {
+    csrfBootstrapPromise = fetch(`${API_URL}/auth/csrf`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(() => undefined)
+      .catch(() => undefined)
+      .finally(() => {
+        csrfBootstrapPromise = null;
+      });
+  }
+  await csrfBootstrapPromise;
 }
 
 async function refreshSession(): Promise<boolean> {
@@ -73,10 +90,13 @@ function humanizeError(status: number, message: string, details: string) {
 
 async function request<T>(path: string, options: RequestInit = {}, hasRetried = false): Promise<T> {
   const headers = new Headers(options.headers);
+  const method = (options.method || "GET").toUpperCase();
+  if (["POST", "PATCH", "PUT", "DELETE"].includes(method)) {
+    await ensureCSRFToken();
+  }
   if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-  const method = (options.method || "GET").toUpperCase();
   if (["POST", "PATCH", "PUT", "DELETE"].includes(method)) {
     const csrf = getCSRFCookie();
     if (csrf && !headers.has("X-CSRF-Token")) {

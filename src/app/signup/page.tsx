@@ -54,9 +54,16 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await api.post("/auth/register", { email, password, role: "buyer", captcha_token: captchaToken });
+      const res = await api.post<{ verification_token?: string }>("/auth/register", { email, password, role: "buyer", captcha_token: captchaToken });
       const next = new URLSearchParams(window.location.search).get("next") || "/";
-      router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`);
+      const params = new URLSearchParams({
+        email,
+        next,
+      });
+      if (res?.verification_token) {
+        params.set("token", res.verification_token);
+      }
+      router.push(`/verify-email?${params.toString()}`);
     } catch (err: unknown) {
       const message = (err as { message?: string })?.message || "Sign up failed.";
       if (message.toLowerCase().includes("verification code right now")) {

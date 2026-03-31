@@ -7,10 +7,9 @@ import { api } from "@/lib/api";
 import TurnstileWidget from "@/components/auth/TurnstileWidget";
 
 type VerificationStatusResponse = {
-  email?: string;
-  verified?: boolean;
   otp_sent_at?: string | null;
   expires_at?: string | null;
+  verification_token?: string;
 };
 
 const RESEND_DELAY_SECONDS = 30;
@@ -21,6 +20,7 @@ function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const email = useMemo(() => searchParams.get("email") || "", [searchParams]);
   const next = useMemo(() => searchParams.get("next") || "/", [searchParams]);
+  const token = useMemo(() => searchParams.get("token") || "", [searchParams]);
   const [code, setCode] = useState("");
   const [captchaToken, setCaptchaToken] = useState("");
   const [error, setError] = useState("");
@@ -31,20 +31,26 @@ function VerifyEmailContent() {
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [secondsUntilResend, setSecondsUntilResend] = useState(0);
   const [showResendHint, setShowResendHint] = useState(false);
+  const [verificationToken, setVerificationToken] = useState(token);
   const formattedExpiryTime = useMemo(
     () => (expiresAt ? new Date(expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""),
     [expiresAt]
   );
 
   useEffect(() => {
+    setVerificationToken(token);
+  }, [token]);
+
+  useEffect(() => {
     let mounted = true;
     async function loadStatus() {
-      if (!email) return;
+      if (!verificationToken) return;
       try {
-        const res = await api.get<VerificationStatusResponse>(`/auth/verification-status?email=${encodeURIComponent(email)}`);
+        const res = await api.get<VerificationStatusResponse>(`/auth/verification-status?token=${encodeURIComponent(verificationToken)}`);
         if (!mounted) return;
         setOtpSentAt(res.otp_sent_at || null);
         setExpiresAt(res.expires_at || null);
+        if (res.verification_token) setVerificationToken(res.verification_token);
       } catch {
         // Keep the verify flow usable even if status lookup fails.
       }
@@ -53,7 +59,7 @@ function VerifyEmailContent() {
     return () => {
       mounted = false;
     };
-  }, [email]);
+  }, [verificationToken]);
 
   useEffect(() => {
     if (!otpSentAt) {
@@ -103,6 +109,7 @@ function VerifyEmailContent() {
       const res = await api.post<VerificationStatusResponse>("/auth/resend-verification", { email, captcha_token: captchaToken });
       setOtpSentAt(res.otp_sent_at || new Date().toISOString());
       setExpiresAt(res.expires_at || null);
+      if (res.verification_token) setVerificationToken(res.verification_token);
       setSuccess("A new verification code has been sent. It expires in 10 minutes.");
     } catch (err: unknown) {
       setError((err as { message?: string })?.message || "Could not resend verification code.");
