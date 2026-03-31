@@ -8,6 +8,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useAuthStore } from "@/store/auth";
 import { api } from "@/lib/api";
 import { normalizeProduct, type CatalogProduct } from "@/lib/catalog";
+import { openCookiePreferences } from "@/lib/cookie-consent";
 
 export default function Header() {
   const [query, setQuery] = useState("");
@@ -265,16 +266,30 @@ export default function Header() {
                   { label: "Track an order", href: "/support#track-order" },
                   { label: "Cancel an order", href: "/support#cancel-order" },
                   { label: "Returns & Refunds", href: "/support#returns" },
-                  { label: "Cookie Preferences", href: "/support#cookie-preferences" },
+                  { label: "Cookie Preferences", action: "preferences" as const },
                 ].map((item) => (
-                  <Link
-                    key={item.label}
-                    onClick={() => setShowHelp(false)}
-                    href={item.href}
-                    className="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 transition hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10"
-                  >
-                    {item.label}
-                  </Link>
+                  item.action === "preferences" ? (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => {
+                        setShowHelp(false);
+                        openCookiePreferences();
+                      }}
+                      className="block w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-gray-900 transition hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10"
+                    >
+                      {item.label}
+                    </button>
+                  ) : (
+                    <Link
+                      key={item.label}
+                      onClick={() => setShowHelp(false)}
+                      href={item.href}
+                      className="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 transition hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10"
+                    >
+                      {item.label}
+                    </Link>
+                  )
                 ))}
               </div>
               <div className="border-t border-black/10 p-3 dark:border-white/10">

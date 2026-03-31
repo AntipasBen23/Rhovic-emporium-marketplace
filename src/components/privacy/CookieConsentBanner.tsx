@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { buildConsent, cookieConsentLabel, getCookieConsent, saveCookieConsent } from "@/lib/cookie-consent";
+import {
+  buildConsent,
+  cookieConsentLabel,
+  getCookieConsent,
+  onOpenCookiePreferences,
+  saveCookieConsent,
+} from "@/lib/cookie-consent";
 
 export default function CookieConsentBanner() {
   const [mounted, setMounted] = useState(false);
@@ -15,6 +21,14 @@ export default function CookieConsentBanner() {
     const saved = getCookieConsent();
     setShowBanner(!saved);
     setAnalyticsEnabled(saved?.analytics ?? true);
+  }, []);
+
+  useEffect(() => {
+    return onOpenCookiePreferences(() => {
+      const saved = getCookieConsent();
+      setAnalyticsEnabled(saved?.analytics ?? true);
+      setShowPreferences(true);
+    });
   }, []);
 
   function acceptAll() {
@@ -131,4 +145,3 @@ export default function CookieConsentBanner() {
     </>
   );
 }
-

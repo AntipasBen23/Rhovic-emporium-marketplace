@@ -31,6 +31,10 @@ function VerifyEmailContent() {
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [secondsUntilResend, setSecondsUntilResend] = useState(0);
   const [showResendHint, setShowResendHint] = useState(false);
+  const formattedExpiryTime = useMemo(
+    () => (expiresAt ? new Date(expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""),
+    [expiresAt]
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -57,9 +61,10 @@ function VerifyEmailContent() {
       setShowResendHint(false);
       return;
     }
+    const sentAt = otpSentAt;
 
     function updateTimers() {
-      const sentAtMs = new Date(otpSentAt).getTime();
+      const sentAtMs = new Date(sentAt).getTime();
       const now = Date.now();
       const resendAtMs = sentAtMs + RESEND_DELAY_SECONDS * 1000;
       const hintAtMs = sentAtMs + SUGGESTION_DELAY_SECONDS * 1000;
@@ -119,7 +124,7 @@ function VerifyEmailContent() {
         {otpSentAt ? (
           <p className="text-xs font-medium text-gray-500 dark:text-gray-500">
             Last code issued at {new Date(otpSentAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}.
-            {expiresAt ? ` It stays valid until ${new Date(expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.` : ""}
+            {formattedExpiryTime ? ` It stays valid until ${formattedExpiryTime}.` : ""}
           </p>
         ) : null}
         {showResendHint && secondsUntilResend === 0 ? (

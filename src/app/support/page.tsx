@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { openCookiePreferences } from "@/lib/cookie-consent";
 
 type SupportThreadItem = {
   id: string;
@@ -162,6 +163,15 @@ export default function SupportPage() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.location.hash !== "#cookie-preferences") return;
+    const timer = window.setTimeout(() => {
+      openCookiePreferences();
+    }, 120);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (!selectedID || authRequired) return;
     const timer = window.setInterval(() => {
       void loadThread(selectedID);
@@ -255,6 +265,15 @@ export default function SupportPage() {
               <Link href="/my-orders" className="mt-4 inline-flex text-sm font-bold text-primary hover:underline">
                 Go to my orders
               </Link>
+            ) : null}
+            {item.id === "cookie-preferences" ? (
+              <button
+                type="button"
+                onClick={openCookiePreferences}
+                className="mt-4 inline-flex text-sm font-bold text-primary hover:underline"
+              >
+                Manage cookie preferences
+              </button>
             ) : null}
           </article>
         ))}
