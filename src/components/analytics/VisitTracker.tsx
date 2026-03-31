@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { getCookieConsent, onCookieConsentChange } from "@/lib/cookie-consent";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
@@ -11,8 +12,19 @@ export default function VisitTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const lastTrackedRef = useRef("");
+  const analyticsAllowedRef = useRef(false);
 
   useEffect(() => {
+    analyticsAllowedRef.current = !!getCookieConsent()?.analytics;
+    return onCookieConsentChange((consent) => {
+      analyticsAllowedRef.current = !!consent?.analytics;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!analyticsAllowedRef.current) {
+      return;
+    }
     const query = searchParams.toString();
     const path = query ? `${pathname}?${query}` : pathname;
     if (!path || lastTrackedRef.current === path) {

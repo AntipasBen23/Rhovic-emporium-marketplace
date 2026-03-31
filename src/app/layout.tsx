@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import VisitTracker from "@/components/analytics/VisitTracker";
 import SessionManager from "@/components/auth/SessionManager";
+import CookieConsentBanner from "@/components/privacy/CookieConsentBanner";
 
 export const metadata: Metadata = {
   title: "RHOVIC Marketplace",
@@ -41,6 +42,7 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <VisitTracker />
           </Suspense>
+          <CookieConsentBanner />
           <div className="min-h-screen bg-white text-gray-950 dark:bg-[rgb(8,15,12)] dark:text-gray-50 transition-colors duration-300">
             <Header />
             <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">{children}</main>
