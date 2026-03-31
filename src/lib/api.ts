@@ -2,12 +2,24 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://rhovic-emporium-back
 
 let refreshPromise: Promise<boolean> | null = null;
 
+function getCSRFCookie() {
+  if (typeof document === "undefined") return "";
+  const cookie = document.cookie
+    .split("; ")
+    .find((part) => part.startsWith("rhovic_csrf_token="));
+  return cookie ? decodeURIComponent(cookie.slice("rhovic_csrf_token=".length)) : "";
+}
+
 async function refreshSession(): Promise<boolean> {
   if (!refreshPromise) {
+    const csrf = getCSRFCookie();
     refreshPromise = fetch(`${API_URL}/auth/refresh`, {
       method: "POST",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(csrf ? { "X-CSRF-Token": csrf } : {}),
+      },
       body: JSON.stringify({}),
     })
       .then((response) => response.ok)
@@ -63,6 +75,13 @@ async function request<T>(path: string, options: RequestInit = {}, hasRetried = 
   const headers = new Headers(options.headers);
   if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
+  }
+  const method = (options.method || "GET").toUpperCase();
+  if (["POST", "PATCH", "PUT", "DELETE"].includes(method)) {
+    const csrf = getCSRFCookie();
+    if (csrf && !headers.has("X-CSRF-Token")) {
+      headers.set("X-CSRF-Token", csrf);
+    }
   }
 
   const response = await fetch(`${API_URL}${path}`, {
