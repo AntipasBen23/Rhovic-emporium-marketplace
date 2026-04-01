@@ -88,7 +88,7 @@ function humanizeError(status: number, message: string, details: string) {
   return message;
 }
 
-async function request<T>(path: string, options: RequestInit = {}, hasRetried = false): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}, hasRetried = false, csrfRetried = false): Promise<T> {
   const headers = new Headers(options.headers);
   const method = (options.method || "GET").toUpperCase();
   if (["POST", "PATCH", "PUT", "DELETE"].includes(method)) {
@@ -120,9 +120,23 @@ async function request<T>(path: string, options: RequestInit = {}, hasRetried = 
   if (canRefresh) {
     const refreshed = await refreshSession();
     if (refreshed) {
-      return request<T>(path, options, true);
+      return request<T>(path, options, true, csrfRetried);
     }
     clearPersistedAuth();
+  }
+
+  const canRetryCSRF =
+    !csrfRetried &&
+    response.status === 403 &&
+    ["POST", "PATCH", "PUT", "DELETE"].includes(method) &&
+    !path.startsWith("/auth/login") &&
+    !path.startsWith("/auth/refresh") &&
+    !path.startsWith("/auth/logout");
+
+  if (canRetryCSRF) {
+    csrfBootstrapPromise = null;
+    await ensureCSRFToken();
+    return request<T>(path, options, hasRetried, true);
   }
 
   if (!response.ok) {
