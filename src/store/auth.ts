@@ -1,28 +1,13 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 interface AuthState {
-    token: string | null;
-    role: string | null;
-    setAuth: (token: string, role: string) => void;
-    logout: () => void;
+  role: string | null;
+  setRole: (role: string) => void;
+  logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-    persist(
-        (set) => ({
-            token: null,
-            role: null,
-            setAuth: (token, role) => {
-                set({ token, role });
-            },
-            logout: () => {
-                set({ token: null, role: null });
-            },
-        }),
-        {
-            name: "rhovic-auth",
-            partialize: (state) => ({ role: state.role }),
-        }
-    )
-);
+export const useAuthStore = create<AuthState>()((set) => ({
+  role: null,
+  setRole: (role) => set({ role }),
+  logout: () => set({ role: null }),
+}));

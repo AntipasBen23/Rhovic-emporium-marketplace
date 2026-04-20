@@ -57,7 +57,6 @@ export default function VendorDashboardPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [vendorOrders, setVendorOrders] = useState<VendorOrder[]>([]);
 
-  const token = useAuthStore((state) => state.token);
   const role = useAuthStore((state) => state.role);
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
@@ -74,8 +73,8 @@ export default function VendorDashboardPage() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    if (token || role === "vendor") fetchData();
-  }, [token, role]);
+    if (role === "vendor") fetchData();
+  }, [role]);
 
   async function fetchData() {
     try {
@@ -227,7 +226,7 @@ export default function VendorDashboardPage() {
     }
   }
 
-  if (!token && role !== "vendor") {
+  if (role !== "vendor") {
     return (
       <div className="flex flex-col items-center justify-center pt-20 space-y-4">
         <h2 className="text-xl font-extrabold">Please log in as a vendor</h2>

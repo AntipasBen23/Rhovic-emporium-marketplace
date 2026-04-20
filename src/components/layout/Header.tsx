@@ -25,10 +25,9 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const token = useAuthStore((s) => s.token);
   const role = useAuthStore((s) => s.role);
   const logout = useAuthStore((s) => s.logout);
-  const isLoggedIn = !!token || !!role;
+  const isLoggedIn = !!role;
 
   const itemCount = useCartStore((s) => s.count());
   const cartLabel = useMemo(() => {

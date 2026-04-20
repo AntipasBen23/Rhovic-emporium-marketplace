@@ -16,12 +16,38 @@ function isProtectedPath(pathname: string) {
   );
 }
 
+function roleFromToken(token: string): string | null {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return typeof payload.role === "string" ? payload.role : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function SessionManager() {
   const role = useAuthStore((state) => state.role);
+  const setRole = useAuthStore((state) => state.setRole);
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
   const pathname = usePathname();
   const timeoutRef = useRef<number | null>(null);
+
+  // Bootstrap session from backend on app load so role always comes from a live token.
+  useEffect(() => {
+    async function bootstrap() {
+      try {
+        const res = await api.post<{ access_token: string }>("/auth/refresh", {});
+        const liveRole = roleFromToken(res.access_token);
+        if (liveRole) {
+          setRole(liveRole);
+        }
+      } catch {
+        // No valid session — stay logged out.
+      }
+    }
+    void bootstrap();
+  }, [setRole]);
 
   useEffect(() => {
     function handleForcedLogout() {

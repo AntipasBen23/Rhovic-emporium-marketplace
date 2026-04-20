@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const setRole = useAuthStore((state) => state.setRole);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,7 +29,7 @@ export default function LoginPage() {
       );
 
       const payload = JSON.parse(atob(res.access_token.split(".")[1]));
-      setAuth(res.access_token, payload.role);
+      setRole(payload.role);
 
       const next = new URLSearchParams(window.location.search).get("next");
       if (next) {

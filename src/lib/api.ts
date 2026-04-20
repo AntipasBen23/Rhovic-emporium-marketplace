@@ -50,7 +50,6 @@ async function refreshSession(): Promise<boolean> {
 
 function clearPersistedAuth() {
   if (typeof window === "undefined") return;
-  localStorage.removeItem("rhovic-auth");
   window.dispatchEvent(new Event("rhovic-auth-logout"));
 }
 
